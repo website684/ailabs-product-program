@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Builder placement — Web Browsing tool · AI Labs Prototype</title>
+<style>
+/* Placement prototype: where Browser Use appears in the agent-creation journey.
+   Design language = ai-labs-mfe tokens. Companion to browseruse-capability-prd.html §3.4 */
+/* ═══ BetterPlace Studio deck design language ═══════════════════
+   Single visual world (deck-dark, by design — matches studio deck):
+   navy #05081f ground · Poppins display · Inter body ·
+   JetBrains Mono labels · yellow #ffc401 accent */
+/* ═══ AI Labs PRODUCT design language (in-app surface) ═══ */
+:root{
+  --primary:#1B2D93; --primary-text:#1B2D93; --accent:#0953E5;
+  --primary-light:#e3ecff; --primary-lighter:#f1f4ff;
+  --async:#7c3aed; --async-light:#ede9fe;
+  --success:#16a34a; --success-light:#dcfce7;
+  --warning:#d97706; --warning-light:#fef3c7;
+  --danger:#dc2626; --danger-light:#fee2e2;
+  --ok:#16a34a; --ok-light:#dcfce7; --warn:#d97706; --warn-light:#fef3c7;
+  --err:#dc2626; --err-light:#fee2e2;
+  --bg:#f5f6fa; --surface:#ffffff; --muted:#f9fafb; --surface-muted:#f9fafb;
+  --border:#e1e4e8; --border-2:#d1d5db; --border-strong:#d1d5db;
+  --text:#1a1a2e; --text-2:#6b7280; --text-3:#9ca3af;
+  --side:#1a1a2e; --side-text:#e5e7f0;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --disp:var(--sans);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r-sm:6px; --r:10px; --r-lg:14px; --r-pill:999px;
+  --shadow:0 1px 2px rgba(26,26,46,.05),0 6px 20px -8px rgba(26,26,46,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.top{background:var(--side);color:#e5e7f0;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:#fff}
+.top .brand .lg{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#6d28d9,#8b5cf6);display:grid;place-items:center;font-size:12px}
+.top .crumb{font-family:var(--mono);font-size:11px;opacity:.65}
+.top .links{margin-left:auto;display:flex;gap:8px}
+.top .links a{color:#cdd3ea;font-size:11px;text-decoration:none;border:1px solid rgba(255,255,255,.2);border-radius:var(--r-pill);padding:4px 11px}
+
+.main{max-width:1080px;margin:0 auto;padding:24px 18px 90px}
+.h1row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 4px}
+h1{font-size:20px;margin:0;font-weight:700}
+.sub{color:var(--text-2);font-size:13px;margin:0 0 18px;max-width:80ch}
+.badge{display:inline-block;font-size:10.5px;font-weight:650;border-radius:var(--r-pill);padding:2px 10px}
+.badge.new{background:var(--async-light);color:var(--async)}
+.badge.ok{background:var(--ok-light);color:var(--ok)}
+.badge.warn{background:var(--warn-light);color:var(--warn)}
+.badge.err{background:var(--err-light);color:var(--err)}
+.badge.mut{background:var(--muted);color:var(--text-2);border:1px solid var(--border)}
+
+/* journey strip */
+.journey{display:flex;gap:6px;overflow-x:auto;padding:4px 0 14px}
+.jn{flex:none;display:flex;align-items:center;gap:8px;border:1.5px solid var(--border-2);border-radius:var(--r-pill);padding:7px 14px;font-size:12px;background:var(--surface);color:var(--text-2);white-space:nowrap}
+.jn b{color:var(--text)}
+.jn .num{width:18px;height:18px;border-radius:50%;background:var(--muted);display:grid;place-items:center;font-family:var(--mono);font-size:10px}
+.jn.hl{border-color:var(--async);background:var(--async-light)}
+.jn.hl .num{background:var(--primary);color:#fff}
+.jarr{align-self:center;color:var(--text-3)}
+
+/* builder chrome */
+.builder{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.bhead{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bhead b{font-size:14px}
+.wsteps{display:flex;gap:2px;margin-left:auto;overflow-x:auto}
+.wsteps span{font-size:11px;color:var(--text-3);padding:4px 9px;border-radius:7px;white-space:nowrap}
+.wsteps span.cur{background:var(--primary-light);color:var(--primary);font-weight:650}
+.bbody{padding:16px 18px}
+.stepcard{border:1px solid var(--border);border-radius:var(--r);background:var(--muted);padding:12px 15px;margin-bottom:14px}
+.stepcard b{font-size:13px}
+.stepcard .m{font-size:11.5px;color:var(--text-2);margin-top:2px}
+
+/* picker */
+.srcs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin:4px 0 12px;overflow-x:auto}
+.srcs button{background:none;border:none;padding:9px 13px;font-size:12.5px;color:var(--text-2);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.srcs button.on{color:var(--primary);font-weight:650;border-bottom-color:var(--accent)}
+.srcs button .n{font-family:var(--mono);font-size:10px;background:var(--muted);border-radius:var(--r-pill);padding:1px 7px;margin-left:5px}
+.tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:700px}
+th,td{text-align:left;padding:9px 12px;border-top:1px solid var(--border);font-size:12.5px;vertical-align:middle}
+th{border-top:none;background:var(--muted);font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);font-weight:500}
+td b{font-size:12.5px}
+td .d{font-size:11px;color:var(--text-3)}
+.att{border:1.5px solid var(--accent);color:var(--accent);background:var(--surface);border-radius:var(--r-pill);padding:5px 13px;font-size:12px;font-weight:600}
+.att.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.newbtn{display:inline-flex;align-items:center;gap:7px;border:1.5px dashed var(--border-2);background:var(--muted);border-radius:var(--r);padding:9px 15px;font-size:12.5px;color:var(--text-2);margin-top:10px}
+.newbtn:hover{border-color:var(--async);color:var(--async)}
+.mono{font-family:var(--mono);font-size:.9em}
+
+/* drawer */
+.overlay{position:fixed;inset:0;background:rgba(15,17,26,.5);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}
+.overlay.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(480px,100%);background:var(--surface);border-left:1px solid var(--border);box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(102%);transition:transform .3s cubic-bezier(.22,.61,.36,1);z-index:50;display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.dhead{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.dhead b{font-size:15px}
+.dhead .x{margin-left:auto;border:none;background:var(--muted);border-radius:50%;width:30px;height:30px;font-size:13px;color:var(--text-2)}
+.dbody{flex:1;overflow-y:auto;padding:16px 20px}
+.dsec{margin-bottom:18px}
+.dsec label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
+.dsec input,.dsec select{width:100%;padding:9px 12px;border:1px solid var(--border-2);border-radius:8px;font-size:13px;background:var(--muted);color:var(--text)}
+.help{font-size:11px;color:var(--text-3);margin-top:4px}
+.siterow{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:8px;padding:8px 11px;margin-bottom:6px;font-size:12.5px;background:var(--muted)}
+.siterow .mono{flex:1}
+.tiers{display:grid;gap:7px}
+.tier{display:flex;gap:10px;border:1.5px solid var(--border-2);border-radius:9px;padding:10px 12px;align-items:flex-start;cursor:pointer}
+.tier input{width:auto;margin-top:3px}
+.tier b{font-size:12.5px;display:block}
+.tier p{margin:1px 0 0;font-size:11px;color:var(--text-2)}
+.tier.sel{border-color:var(--async);background:var(--async-light)}
+.tier.dis{opacity:.5;cursor:not-allowed}
+.lockrow{display:flex;align-items:center;gap:9px;background:var(--muted);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12px;margin-bottom:6px}
+.lockrow .lk{margin-left:auto;font-size:10px;color:var(--text-3);font-family:var(--mono)}
+.dfoot{border-top:1px solid var(--border);padding:14px 20px;display:flex;gap:10px}
+.btn{border-radius:9px;border:1px solid var(--border-2);background:var(--surface);padding:10px 16px;font-size:13px;font-weight:600;color:var(--text)}
+.btn.pri{background:var(--primary);border-color:var(--primary);color:#fff;flex:1}
+
+/* publish gates */
+.gates{display:grid;gap:7px}
+.gate{display:flex;gap:10px;align-items:center;border:1px solid var(--border);border-radius:9px;padding:9px 13px;font-size:12.5px;background:var(--surface)}
+.gate .ic{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;flex:none}
+.gate.pass .ic{background:var(--ok-light);color:var(--ok)}
+.gate.block .ic{background:var(--err-light);color:var(--err)}
+.gate.warn2 .ic{background:var(--warn-light);color:var(--warn)}
+.gate .why{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--text-3);text-align:right}
+.note{border-left:3px solid var(--accent);background:var(--primary-lighter);border-radius:0 var(--r) var(--r) 0;padding:11px 15px;font-size:12.5px;color:var(--text-2);margin:14px 0}
+footer{margin-top:26px;color:var(--text-3);font-size:11px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand"><span class="lg">⚗️</span> AI Labs</div>
+  <span class="crumb">Agents / AI Jack — Talent Specialist / Builder / <b>Steps · Tools</b></span>
+  <div class="links">
+    <a href="browseruse-capability-prd.html">📄 PRD §3.4</a>
+    <a href="recruiter-agent-workspace.html">🎯 Runtime demo</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="h1row"><h1>Where "Web browsing" lives in the creation journey</h1><span class="badge new">PLACEMENT PROTOTYPE</span></div>
+  <p class="sub">It inherits the surfaces builders already know: an org-level tool type, a third tab in the step tool picker, a scope card on the step, and publish gates. No new wizard step. Click around: source tabs, <b>+ New browsing task</b>, tier options, and Attach.</p>
+
+  <!-- journey strip -->
+  <div class="journey">
+    <span class="jn"><span class="num">1</span><span>Org · Integrations<br><b>New → Web browsing task</b></span></span>
+    <span class="jarr">→</span>
+    <span class="jn hl"><span class="num">2</span><span>Agent builder · Step tools<br><b>third source tab</b> (this screen)</span></span>
+    <span class="jarr">→</span>
+    <span class="jn"><span class="num">3</span><span>Step scope card<br><b>budgets + input mapping</b></span></span>
+    <span class="jarr">→</span>
+    <span class="jn"><span class="num">4</span><span>Review · publish<br><b>gates</b> (below)</span></span>
+    <span class="jarr">→</span>
+    <span class="jn"><span class="num">5</span><span>Runtime<br><b>approval card + live session</b></span></span>
+  </div>
+
+  <!-- builder chrome -->
+  <div class="builder">
+    <div class="bhead">
+      <b>AI Jack — Talent Specialist</b> <span class="badge mut">CHAT_AGENT · draft</span>
+      <div class="wsteps"><span>Name it</span><span>How it talks</span><span>What it knows</span><span class="cur">Steps · Tools</span><span>Safety</span><span>Review</span></div>
+    </div>
+    <div class="bbody">
+      <div class="stepcard">
+        <b>Step 3 · Source candidates</b> <span class="badge mut">Call a tool</span>
+        <div class="m">Goal: find matching candidates for the requisition when the talent pool has too few. Needs: req fields → search terms.</div>
+      </div>
+
+      <div class="srcs">
+        <button data-s="mcp">Attached MCP <span class="n">4</span></button>
+        <button data-s="int">Internal integrations <span class="n">7</span></button>
+        <button class="on" data-s="web">Web browsing <span class="n">2</span> <span class="badge new" style="margin-left:4px">NEW</span></button>
+      </div>
+
+      <!-- web browsing source -->
+      <div class="srcpane" id="pane-web">
+        <div class="tblwrap"><table>
+          <thead><tr><th>Browsing task</th><th>Sites · ToS review</th><th>Tier</th><th>Writes to</th><th>Last canary</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Source frontline candidates</b><div class="d">search + extract public profiles</div></td>
+              <td><span class="mono">jobstreet.com.my</span> <span class="badge ok">reviewed ✓</span><br><span class="mono">fastjobs.my</span> <span class="badge ok">reviewed ✓</span></td>
+              <td><span class="badge ok">Tier 0 · read</span></td>
+              <td><span class="mono">candidate_pool</span></td>
+              <td><span class="badge ok">passed · 06:00</span></td>
+              <td><button class="att" id="attach1" onclick="attach(this)">Attach</button></td>
+            </tr>
+            <tr>
+              <td><b>Verify TVET certificate</b><div class="d">issuer portal lookup (AI Cole)</div></td>
+              <td><span class="mono">certportal.gov.my</span> <span class="badge warn">review due</span></td>
+              <td><span class="badge ok">Tier 0 · read</span></td>
+              <td><span class="mono">verification_evidence</span></td>
+              <td><span class="badge warn">selector drift</span></td>
+              <td><button class="att" disabled title="Blocked until ToS review refreshed">Attach</button></td>
+            </tr>
+          </tbody>
+        </table></div>
+        <button class="newbtn" onclick="openDrawer()">＋ New browsing task <span class="badge mut">opens org-level config</span></button>
+      </div>
+
+      <div class="srcpane" id="pane-mcp" style="display:none">
+        <div class="tblwrap"><table>
+          <thead><tr><th>Tool</th><th>Source</th><th>Returns</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><b>pool_search</b><div class="d">query governed talent pool</div></td><td class="mono">datasets_mcp</td><td class="mono">candidates[]</td><td><button class="att on" disabled>Attached ✓</button></td></tr>
+            <tr><td><b>get_req_details</b></td><td class="mono">ats_mcp</td><td class="mono">requisition</td><td><button class="att on" disabled>Attached ✓</button></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="srcpane" id="pane-int" style="display:none">
+        <div class="tblwrap"><table>
+          <thead><tr><th>Tool</th><th>Type</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><b>whatsapp_send</b><div class="d">BSP template sender</div></td><td class="mono">API</td><td><button class="att">Attach</button></td></tr>
+            <tr><td><b>calendar_book</b></td><td class="mono">API</td><td><button class="att">Attach</button></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="note" id="scopenote" style="display:none">
+        <b>Step scope card (journey #3)</b> — appears once attached: budget <span class="mono">≤20 min · ≤40 pages · ≤5 credits</span> · input mapping <span class="mono">req.role, req.location → search terms</span> · output <span class="mono">profiles[] → candidate_pool (SOURCED_NO_CONSENT)</span> · requester approval required at runtime.
+      </div>
+    </div>
+  </div>
+
+  <!-- publish gates -->
+  <div class="builder">
+    <div class="bhead"><b>Review · publish gates</b> <span class="badge mut">journey #4 — updates live</span></div>
+    <div class="bbody gates" id="gates">
+      <div class="gate pass"><span class="ic">✓</span> Site ToS reviews current for all attached browsing tasks <span class="why">jobstreet ✓ fastjobs ✓</span></div>
+      <div class="gate pass"><span class="ic">✓</span> Extraction schema bound to a Dataset with retention set <span class="why">candidate_pool · 90d purge</span></div>
+      <div class="gate block" id="gate-hitl"><span class="ic">✕</span> HITL approver role assigned for browsing sessions <span class="why">assign in Safety step</span></div>
+      <div class="gate warn2"><span class="ic">!</span> Runtime cost estimate shown to requester <span class="why">~4.2 credits / session</span></div>
+    </div>
+    <div class="note">Publishing stays <b>blocked</b> until the approver role is set — browsing never ships without a named human in the loop. Same gate pattern as unmapped widget fields today.</div>
+  </div>
+
+  <footer>Placement prototype · companion to browseruse-capability-prd.html §3.4 and recruiter-agent-workspace.html (runtime) · internal demo</footer>
+</div>
+
+<!-- drawer: org-level task config -->
+<div class="overlay" id="ovl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drw" aria-label="New browsing task">
+  <div class="dhead"><b>New web browsing task</b> <span class="badge new">org-level · reusable</span><button class="x" onclick="closeDrawer()">✕</button></div>
+  <div class="dbody">
+    <div class="dsec">
+      <label>Task name</label>
+      <input value="Source frontline candidates — Indonesia boards">
+      <div class="help">Reusable by any agent in this org, like an HTTP tool.</div>
+    </div>
+    <div class="dsec">
+      <label>Allowed sites (each needs a logged ToS review)</label>
+      <div class="siterow"><span class="mono">kitalulus.com</span> <span class="badge warn">review pending</span></div>
+      <div class="siterow"><span class="mono">glints.com/id</span> <span class="badge warn">review pending</span></div>
+      <div class="help">⚠ Indonesia (UU PDP): no public-data exemption — legal review is a hard gate before this task can be attached. LinkedIn cannot be added (platform-level block).</div>
+    </div>
+    <div class="dsec">
+      <label>What the agent may do — action tier</label>
+      <div class="tiers">
+        <label class="tier sel"><input type="radio" name="tier" checked><span><b>Tier 0 — Read &amp; extract</b><p>search, read, paginate, extract to schema. Approve once per session.</p></span></label>
+        <label class="tier"><input type="radio" name="tier"><span><b>Tier 1 — Interact (no submit)</b><p>filters, expanders, tabs. Explicit approval per session.</p></span></label>
+        <label class="tier dis"><input type="radio" name="tier" disabled><span><b>Tier 2 — Submit / send / pay</b><p>Not available. Irreversible actions stay human-only in v1.</p></span></label>
+      </div>
+    </div>
+    <div class="dsec">
+      <label>Extraction schema → destination</label>
+      <select><option>candidate_pool (Datasets) — consent lifecycle enforced</option><option>market_signals (Datasets)</option><option>+ new collection…</option></select>
+      <div class="help">Records land with provenance (source URL, fetched-at, run) + consent state <span class="mono">SOURCED_NO_CONSENT</span> + 90-day purge.</div>
+    </div>
+    <div class="dsec">
+      <label>Defaults &amp; non-negotiables</label>
+      <div class="lockrow">Session recording &amp; action log <span class="lk">ALWAYS ON 🔒</span></div>
+      <div class="lockrow">Rate-limit / human pacing <span class="lk">ALWAYS ON 🔒</span></div>
+      <div class="lockrow">Credentials <span class="lk">NONE — v1 is logged-out only 🔒</span></div>
+      <div class="lockrow">Default budget <span class="lk">20 min · 40 pages · 5 credits</span></div>
+    </div>
+  </div>
+  <div class="dfoot">
+    <button class="btn" onclick="closeDrawer()">Cancel</button>
+    <button class="btn pri" onclick="saveTask()">Save — pending ToS review</button>
+  </div>
+</aside>
+
+<script>
+document.querySelectorAll('.srcs button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.srcs button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.querySelectorAll('.srcpane').forEach(p=>p.style.display='none');
+    document.getElementById('pane-'+b.dataset.s).style.display='';
+  });
+});
+function attach(btn){
+  btn.classList.add('on'); btn.textContent='Attached ✓'; btn.disabled=true;
+  document.getElementById('scopenote').style.display='';
+  const g=document.getElementById('gate-hitl');
+  setTimeout(()=>{ // simulate assigning approver from Safety step for the demo
+    g.classList.remove('block'); g.classList.add('pass');
+    g.innerHTML='<span class="ic">✓</span> HITL approver role assigned for browsing sessions <span class="why">Meera (Talent Ops) — demo auto-assign</span>';
+  },1500);
+}
+function openDrawer(){document.getElementById('ovl').classList.add('on');document.getElementById('drw').classList.add('on')}
+function closeDrawer(){document.getElementById('ovl').classList.remove('on');document.getElementById('drw').classList.remove('on')}
+function saveTask(){
+  closeDrawer();
+  const tb=document.querySelector('#pane-web tbody');
+  tb.insertAdjacentHTML('beforeend',`<tr>
+    <td><b>Source frontline candidates — ID boards</b><div class="d">just created · org-level</div></td>
+    <td><span class="mono">kitalulus.com, glints.com/id</span> <span class="badge warn">ToS review pending</span></td>
+    <td><span class="badge ok">Tier 0 · read</span></td>
+    <td><span class="mono">candidate_pool</span></td>
+    <td><span class="badge mut">no canary yet</span></td>
+    <td><button class="att" disabled title="Blocked until ToS review passes">Attach</button></td></tr>`);
+}
+document.querySelectorAll('.tier:not(.dis)').forEach(t=>{
+  t.addEventListener('click',()=>{document.querySelectorAll('.tier').forEach(x=>x.classList.remove('sel'));t.classList.add('sel');t.querySelector('input').checked=true});
+});
+</script>
+</body>
+</html>

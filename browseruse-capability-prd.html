@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRD — Browser Use &amp; Governed Sourcing Data Store · AI Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══ BetterPlace Studio deck design language ═══════════════════
+   Single visual world (deck-dark, by design — matches studio deck):
+   navy #05081f ground · Poppins display · Inter body ·
+   JetBrains Mono labels · yellow #ffc401 accent */
+/* ═══ Readable doc palette: white background, black text ═══ */
+:root{
+  --primary:#1B2D93; --primary-text:#1B2D93; --accent:#0953E5;
+  --primary-light:#e3ecff; --primary-lighter:#f1f4ff;
+  --async:#7c3aed; --async-light:#ede9fe;
+  --ok:#15803d; --ok-light:#dcfce7; --warn:#b45309; --warn-light:#fef3c7;
+  --err:#dc2626; --err-light:#fee2e2;
+  --bg:#ffffff; --surface:#ffffff; --muted:#f5f6fa;
+  --border:#e1e4e8; --border-2:#d1d5db;
+  --text:#111827; --text-2:#374151; --text-3:#6b7280;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --disp:"Poppins",var(--sans);
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px; --r-lg:14px;
+  --shadow:0 1px 2px rgba(17,24,39,.05),0 6px 18px -10px rgba(17,24,39,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.doc{max-width:860px;margin:0 auto;padding:36px 22px 100px}
+.back{font-size:12px;color:var(--accent);text-decoration:none;font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:18px 0 8px;display:flex;align-items:center;gap:10px}.eyebrow::before{content:"";width:28px;height:3px;background:var(--accent);flex:none}
+h1{font-size:clamp(24px,4vw,34px);line-height:1.15;margin:0 0 10px;letter-spacing:-.015em;font-weight:750;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:11px;color:var(--text-3);margin:14px 0 8px}
+.meta b{color:var(--text-2);font-weight:600}
+.badge{display:inline-block;font-size:10.5px;font-weight:650;border-radius:999px;padding:3px 11px}
+.badge.draft{background:var(--warn-light);color:var(--warn)}
+h2{font-size:19px;margin:42px 0 6px;letter-spacing:-.01em}
+h2 .n{color:var(--accent);font-family:var(--mono);font-size:13px;margin-right:8px}
+h3{font-size:15px;margin:22px 0 6px}
+p{margin:8px 0;max-width:72ch}
+li{margin-bottom:5px}
+.lead{font-size:16.5px;color:var(--text-2);max-width:66ch}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:16px 20px;margin:14px 0}
+.callout{border-left:3px solid var(--accent);background:var(--primary-lighter);border-radius:0 var(--r) var(--r) 0;padding:12px 17px;margin:14px 0;font-size:13.5px}
+.callout.red{border-left-color:var(--err);background:var(--err-light)}
+.callout.red b:first-child{color:var(--err)}
+code{font-family:var(--mono);font-size:.86em;background:var(--muted);border:1px solid var(--border);padding:1px 6px;border-radius:5px}
+.tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);margin:12px 0}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{text-align:left;padding:9px 13px;border-top:1px solid var(--border);font-size:13px;vertical-align:top}
+th{border-top:none;background:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);font-weight:500}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--mono);font-size:11px;margin:10px 0}
+.flow .st{background:var(--surface);border:1.5px solid var(--border-2);border-radius:8px;padding:6px 11px;white-space:nowrap}
+.flow .st.hl{border-color:var(--async);background:var(--async-light);color:#5b21b6;font-weight:700}
+.flow .ar{color:var(--text-3)}
+.lifecycle{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--mono);font-size:10.5px;margin:10px 0}
+.lifecycle .s{border-radius:999px;padding:5px 12px;border:1.5px solid var(--border-2);white-space:nowrap}
+.lifecycle .s.warn{border-color:var(--warn);background:var(--warn-light);color:var(--warn)}
+.lifecycle .s.ok{border-color:var(--ok);background:var(--ok-light);color:var(--ok)}
+.lifecycle .s.err{border-color:var(--err);background:var(--err-light);color:var(--err)}
+.two{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.two{grid-template-columns:1fr 1fr}}
+.kv{font-family:var(--mono);font-size:11px;color:var(--text-2);background:var(--muted);border:1px solid var(--border);border-radius:8px;padding:10px 13px;overflow-x:auto}
+.kv b{color:var(--accent)}
+footer{margin-top:56px;border-top:1px solid var(--border);padding-top:16px;font-size:12px;color:var(--text-3);font-family:var(--mono)}
+.toc{font-size:13px;columns:2;column-gap:30px;margin:10px 0 0;padding-left:18px}
+.toc li{break-inside:avoid}
+.toc a{color:var(--accent);text-decoration:none}
+@media(max-width:600px){.toc{columns:1}}
+
+/* live miniature preview ("screen grab" that never goes stale) */
+.shot{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0;background:#fff;box-shadow:var(--shadow)}
+.shot .frame{height:290px;overflow:hidden}
+.shot iframe{width:182%;height:527px;transform:scale(.55);transform-origin:0 0;border:0;pointer-events:none}
+.shot figcaption{font-size:11.5px;color:var(--text-3);padding:8px 13px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;background:var(--muted)}
+.shot figcaption a{color:var(--accent);text-decoration:none;white-space:nowrap}
+
+/* program ribbon — the four docs read as one program */
+.ribbon{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border:1px solid var(--border);background:var(--muted);border-radius:999px;padding:7px 16px;margin-bottom:22px;font-size:11.5px}
+.ribbon .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--text-3)}
+.ribbon a{color:var(--text-2);text-decoration:none}
+.ribbon a:hover{color:var(--accent)}
+.ribbon a.cur{color:var(--primary);font-weight:700}
+.ribbon i{color:var(--border-2);font-style:normal}
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="ribbon"><span class="k">AI LABS PRODUCT PROGRAM · AUG 2026</span> <a href="live-audit-16aug.html">Live audit</a> <i>·</i> <a href="browseruse-capability-prd.html" class="cur">Browser-Use PRD</a> <i>·</i> <a href="templates-marketplace-prd.html">Templates PRD</a> <i>·</i> <a href="roadmap-onepagers.html">Roadmap one-pagers</a> <i>·</i> <a href="marketplace-prototype.html">Prototypes ↗</a></div>
+  <a class="back" href="recruiter-agent-workspace.html">← back to Recruiter Agent demo</a>
+  <div class="eyebrow">AI Labs · Product Requirements Document</div>
+  <h1>Browser Use + Governed Sourcing Data Store</h1>
+  <p class="lead">Give AI Labs agents a browser, so they can work on the large part of the web that has no API — and a governed place to put what they find. First use case: candidate sourcing for the Recruiter Agent.</p>
+  <div class="meta">
+    <span><b>Status</b> <span class="badge draft">DRAFT v0.1</span></span>
+    <span><b>Author</b> Anuj Saxena (Product) + AI Labs</span>
+    <span><b>Date</b> 16 Aug 2026</span>
+    <span><b>Demo</b> recruiter-agent-workspace.html</span>
+    <span><b>Research</b> recruiter_browseruse_research.md (32 cited findings)</span>
+  </div>
+
+  <div class="card">
+    <b>Contents</b>
+    <ol class="toc">
+      <li><a href="#why">Why this matters now</a></li>
+      <li><a href="#goals">Goals &amp; non-goals</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#store">The governed data store</a></li>
+      <li><a href="#compliance">Compliance &amp; red lines</a></li>
+      <li><a href="#platform">Platform integration</a></li>
+      <li><a href="#metrics">Success metrics</a></li>
+      <li><a href="#phases">Phasing</a></li>
+      <li><a href="#risks">Risks &amp; open questions</a></li>
+    </ol>
+  </div>
+
+  <h2 id="why"><span class="n">1</span>Why this matters now</h2>
+  <p><b>Our agents can only act where an API exists.</b> Today an AI Labs agent reaches the world through the tool registry (HTTP tools) and MCP servers. That covers our own systems and modern SaaS — and almost nothing else. The surfaces where frontline recruiting actually happens are browser-only:</p>
+  <ul>
+    <li><b>apna, WorkIndia, JobStreet, FastJobs</b> — the boards where India/SEA frontline candidates live — expose <b>no candidate-search API</b> to employers. WorkIndia alone connects ~30M jobseekers to ~100K businesses a month.</li>
+    <li>Every incumbent AI sourcer (LinkedIn Hiring Assistant, Juicebox, hireEZ, SeekOut) targets white-collar, API-indexed talent. <b>None of them can reach frontline boards — by design.</b> This is open whitespace, not a feature race.</li>
+    <li>The same constraint blocks other roadmap items: competitor price checks, vendor portal tasks, government-portal filings — all browser-only.</li>
+  </ul>
+  <div class="callout">Browser use turns "there's no API" from a roadmap blocker into a configuration task. It runs on the same guardrail, audit and credit machinery every other step type already gets.</div>
+  <div class="callout red"><b>We already sell it.</b> The AI Labs sales deck (betterplace.co.in/studio → ai-labs, slide 1) promises agents that <i>"make real phone calls in 24 languages, read documents, analyse photos and video, <b>browse the web</b>, and do real work inside your systems."</i> The public site's roster ships "hooks", voice, and documents — but no agent can browse anything today. This PRD closes a gap between the promise our sales narrative already makes and what the platform delivers.</div>
+  <p><b>Why now:</b> 2026-era browser-agent stacks have converged on hybrid perception (accessibility-tree first, vision fallback) that is reliable and cheap enough for production pilots — this wasn't true 18 months ago. And our platform already has the primitives a safe rollout needs: typed steps, HITL escalation (<code>WAITING_FOR_HUMAN</code>), session recording, guardrail events, credit metering.</p>
+
+  <h3>1.1 Fit with public positioning &amp; the agent roster</h3>
+  <p>The public page (betterplace.co.in/ai-labs) positions AI Labs as hiring <b>AI employees</b> — Mia, Jack, Cole, Max, Ivy, Theo — with <b>deterministic workflows</b> ("never skips a step"), <b>private-infrastructure data residency</b> ("your data never leaves"), and <b>credit-based pricing</b> (~₹0.37/interaction). Browser use has to land inside that frame:</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Promised agent</th><th>Status</th><th>What browser use adds</th></tr></thead>
+    <tbody>
+      <tr><td><b>AI Jack</b> — Talent Specialist</td><td>Beta</td><td><b>The pilot.</b> Sourcing on apna/WorkIndia/JobStreet/FastJobs (no APIs). Today Jack screens candidates who arrive; with browser use he goes and <i>finds</i> them. (Demo: recruiter-agent-workspace.html)</td></tr>
+      <tr><td><b>AI Cole</b> — Verification Specialist</td><td>Soon</td><td>Second-strongest fit: issuer &amp; registry portals with no API — certificate verification pages, court/cause-list portals, professional-license lookups. Cole's "API validation" claim breaks exactly where there is no API; browser use is the fallback path.</td></tr>
+      <tr><td><b>AI Mia</b> — Onboarding Specialist</td><td>Live</td><td>Employer-side portal tasks in later phases (statutory portal status checks, insurer enrolment lookups) — v2+, login-required tier.</td></tr>
+      <tr><td><b>AI Theo</b> — Learning Specialist</td><td>Live</td><td>Refreshing knowledge bases from public regulatory/SOP sources on a schedule — low-risk read-only, good P2 candidate.</td></tr>
+      <tr><td><b>AI Ivy / AI Max</b></td><td>Live / Soon</td><td>Low need — conversation-native. No browser scope planned.</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><b>Deterministic framing:</b> the site's core differentiator is deterministic execution. A browser session is a bounded, budgeted, recorded task inside a deterministic DAG — the workflow never skips a step; the browser step either returns schema-validated data or parks for a human. Marketing language: "browsing with a seatbelt", never "autonomous web surfing".</li>
+    <li><b>Data-residency constraint (hard):</b> "your data never leaves BetterPlace private infrastructure — ISO 27001 · SOC 2" rules out third-party browser clouds (Browserbase-class) for production. The Browser Runtime Service must run in our own cluster; external SaaS browsers are prototyping-only.</li>
+    <li><b>Pricing fit:</b> browser-minutes are metered as credits like every other capability (voice minutes, interactions). Directional: a sourcing session ≈ minutes of browser time + LLM tokens → priced per <i>useful record</i> to stay in the ₹-per-outcome story the site tells.</li>
+    <li><b>Vocabulary:</b> customer-facing name is <b>"Web browsing"</b> in the capability list (matching the deck's own words); <code>BROWSER</code> is the internal step type. It joins "Sees · Hears · Speaks · Reads" as <b>"Browses"</b>.</li>
+  </ul>
+
+  <h3>1.2 General applicability — beyond recruiting</h3>
+  <p>Recruiting is the wedge. The same primitive (scoped session → schema'd extraction → governed Dataset) serves any "check a website and bring back structured facts" job our customers do manually today:</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>General use case</th><th>Who asks for it</th><th>Dataset it feeds</th><th>Tier</th></tr></thead>
+    <tbody>
+      <tr><td>Certificate / licence verification on issuer portals</td><td>BGV ops (AI Cole)</td><td><code>verification_evidence</code></td><td>read · P1–P2</td></tr>
+      <tr><td>Court cause-list / public-record status checks</td><td>Verify partners</td><td><code>verification_evidence</code></td><td>read · P2</td></tr>
+      <tr><td>Competitor wage &amp; job-ad monitoring by micro-market</td><td>Staffing pricing teams</td><td><code>market_signals</code></td><td>read · P2</td></tr>
+      <tr><td>Vendor/client portal MIS pulls (attendance, invoices) where no API exists</td><td>Enterprise ops</td><td><code>ops_documents</code></td><td>login · P3</td></tr>
+      <tr><td>Regulatory/SOP page watch → KB refresh</td><td>L&amp;D (AI Theo)</td><td>Knowledge Base ingest</td><td>read · P2</td></tr>
+      <tr><td>Statutory portal status lookups (enrolment, filings)</td><td>Payroll/compliance ops</td><td><code>compliance_status</code></td><td>login · P3+</td></tr>
+    </tbody>
+  </table></div>
+  <p>Each becomes a <b>browser task config</b> (site + schema + tier), not new engineering — that's the platform test: the second collection type must onboard without code changes (P2 exit criterion).</p>
+
+  <h2 id="goals"><span class="n">2</span>Goals &amp; non-goals</h2>
+  <div class="two">
+    <div class="card">
+      <b style="color:var(--ok)">Goals (v1)</b>
+      <ul>
+        <li>New <code>BROWSER</code> step type usable in WORKFLOW_AGENT DAGs and as an agent tool</li>
+        <li>Scoped, recorded, HITL-gated browser sessions on an org-approved site allowlist</li>
+        <li>Structured extraction into a governed <b>Datasets</b> store with provenance + consent lifecycle</li>
+        <li>Recruiter Agent sourcing on JobStreet/FastJobs/apna-class boards as the pilot</li>
+      </ul>
+    </div>
+    <div class="card">
+      <b style="color:var(--err)">Non-goals (v1)</b>
+      <ul>
+        <li>No LinkedIn (hard ToS prohibition — see red lines)</li>
+        <li>No login-gated actions, purchases, form submissions, or messaging <i>on external sites</i></li>
+        <li>No autonomous outreach to sourced candidates (HITL always)</li>
+        <li>No general "agent surfs the open web" — allowlisted sites only</li>
+        <li>No CAPTCHA bypass — CAPTCHAs hand off to a human</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="how"><span class="n">3</span>How it works</h2>
+  <h3>3.1 Execution flow</h3>
+  <div class="flow">
+    <span class="st">Agent plans task</span><span class="ar">→</span>
+    <span class="st hl">HITL scope approval</span><span class="ar">→</span>
+    <span class="st">Browser Runtime session</span><span class="ar">→</span>
+    <span class="st">act / extract loop</span><span class="ar">→</span>
+    <span class="st">structured records → Datasets</span><span class="ar">→</span>
+    <span class="st">recording + log → run audit</span>
+  </div>
+  <p>A <code>BROWSER</code> step declares: target sites (must be on the org allowlist), allowed action classes (<code>read / search / extract</code> vs <code>interact</code>), an extraction schema, and budgets (time, pages, credits). Before execution, the run pauses at a <b>scope-approval gate</b> — the requester sees exactly what will and won't be done (the demo shows this card verbatim). Approval is logged as a guardrail event; denial parks the step.</p>
+
+  <figure class="shot"><div class="frame"><iframe src="recruiter-agent-workspace.html" title="preview" loading="lazy" tabindex="-1"></iframe></div><figcaption><span>How it feels: the recruiter workspace — approve the scope card, then watch the live session (URL bar, action log, guardrail chips). Click through the demo to see the browser step run.</span><a href="recruiter-agent-workspace.html">open the real thing ↗</a></figcaption></figure>
+  <h3>3.2 Browser Runtime Service (new microservice)</h3>
+  <ul>
+    <li><b>Pool of headless Chromium workers</b> (Playwright/CDP) in isolated pods; one org never shares a browser profile with another. Fits the existing service estate + k8s patterns.</li>
+    <li><b>Perception: accessibility-tree/DOM first, vision fallback</b> only for canvas-heavy or verification moments — cheaper and more reliable on job-board list views than screenshot loops. Tradeoff accepted: per-site brittleness to DOM changes → per-site selector packs maintained like connector configs.</li>
+    <li><b>Action loop</b> driven by an LLM step with a constrained action space (navigate, search, read, extract, paginate, wait). Every action is journaled with timestamp + URL.</li>
+    <li><b>Session recording</b> (video + action log) stored to S3 via the existing session-media path and linked from RunInspector for replay. The recording is the audit trail, so it cannot be optional.</li>
+    <li><b>Identity:</b> vaulted per-org <i>service accounts</i> where a site requires auth (v2) — never a recruiter's personal login. v1 is logged-out public pages only.</li>
+    <li><b>Anti-bot posture:</b> honest rate-limiting, human-like pacing, robots/ToS-reviewed sites only. Assume Cloudflare-class defenses exist; when blocked or CAPTCHA'd → <code>WAITING_FOR_HUMAN</code>, never bypass.</li>
+    <li><b>Events</b> stream over RTS so the requester can watch the session live (as in the demo) and kill it at any time.</li>
+  </ul>
+
+  <h3>3.3 Human-in-the-loop model</h3>
+  <p>Risk-tiered gates enforced by the execution wrapper <i>outside the model</i> (OWASP Agentic-Top-10 aligned): <b>Tier 0</b> read/extract on allowlisted sites — approve once per session. <b>Tier 1</b> any new site, any interaction beyond read — explicit approval each time. <b>Tier 2</b> anything irreversible (sending, submitting, paying) — <i>not available in v1 at all</i>. Every approval/denial/timeout is a logged guardrail event.</p>
+
+  <h3>3.4 Where it lives in the creation journey</h3>
+  <p>Browser use slots into the surfaces builders already know — no new wizard step (companion prototype: <code>builder-browseruse-placement.html</code>):</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>#</th><th>Journey moment</th><th>What the builder sees</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>Org level — Integrations → New → "Web browsing task"</b></td><td>Alongside API/Database/Webhook tool types. Admin defines: target site(s) w/ ToS-review status, action tier, extraction schema, Dataset destination, budgets. Created once, reused by any agent — same "create once, attach everywhere" model as HTTP tools.</td></tr>
+      <tr><td>2</td><td><b>Agent builder — step Tools picker, third source tab</b></td><td>"Attached MCP · Internal integrations · <b>Web browsing</b>". Rows show site, tier badge, ToS status, Dataset destination, last canary result. Picker warns if the task's site allowlist review is stale.</td></tr>
+      <tr><td>3</td><td><b>Step config — scope card</b></td><td>Per-step budget (pages/minutes/credits), input mapping (e.g. search terms from req), and the output binding into the step's data. Same shape as tool input mapping today.</td></tr>
+      <tr><td>4</td><td><b>Review/publish — gates</b></td><td>Block publish if: site ToS review missing/stale · extraction schema unbound · Dataset retention unset · no HITL approver role assigned for Tier-1 tasks.</td></tr>
+      <tr><td>5</td><td><b>Runtime — approval card + live session</b></td><td>The requester approves the scope card (demoed in recruiter demo), can watch/kill the live session, replay lands in RunInspector.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Rationale: builders already understand "create a tool, attach a tool, map inputs, publish gates". Browser use inherits that muscle memory instead of inventing a parallel concept — consistent with the no-code, 10-minutes-to-agent promise.</p>
+
+  <h2 id="store"><span class="n">4</span>The governed data store — <code>Datasets</code></h2>
+  <p>Browser sourcing is only as valuable as what we keep. Ad-hoc scrape output (spreadsheets, JSON blobs) fails three ways: no provenance, no dedupe, no lawful lifecycle. <b>Datasets</b> is a new platform primitive: org-scoped, schema'd collections that agents read and write through tools — the first collection is <code>candidate_pool</code>.</p>
+  <div class="kv">
+<b>candidate_pool record (v1)</b><br>
+{ candidate_id, org_id, fields{ name, phone_hash, area, experience[], availability… },<br>
+&nbsp;&nbsp;provenance{ <b>source_url, source_site, fetched_at, run_id, extraction_confidence, match_rationale, jurisdiction</b> },<br>
+&nbsp;&nbsp;consent{ <b>state</b>, basis, policy_version, timestamps[], opt_out_honored_at },<br>
+&nbsp;&nbsp;lifecycle{ retention_due, purge_job_id }, dedupe{ identity_key: phone/email hash, merged_from[] } }
+  </div>
+  <h3>Consent lifecycle (the part that makes cold sourcing lawful)</h3>
+  <div class="lifecycle">
+    <span class="s warn">SOURCED_NO_CONSENT</span><span class="ar">→</span>
+    <span class="s">OUTREACH_SENT (opt-in ask)</span><span class="ar">→</span>
+    <span class="s ok">CONSENTED</span> / <span class="s err">DECLINED → purge</span> / <span class="s">EXPIRED → purge</span><span class="ar">→</span>
+    <span class="s ok">ACTIVE_CANDIDATE</span>
+  </div>
+  <ul>
+    <li>Pre-consent, the <b>only</b> permitted contact is the single opt-in ask (with source disclosure + one-tap STOP). STOP triggers immediate purge — demoed verbatim in the outreach preview.</li>
+    <li><b>Retention:</b> sourced-but-never-consented records auto-purge at a configured window (default 90 days). Fixes the "indefinite future-opportunities" pattern regulators flag.</li>
+    <li><b>Dedupe:</b> identity-key merge (phone/email hash, Beamery pattern); provenance is immutable — if a sourced candidate later applies directly, both sources are kept.</li>
+    <li><b>Re-enrichment:</b> scheduled refresh for externally-sourced fields (Gem pattern), not one-shot scrapes.</li>
+  </ul>
+
+  <h2 id="compliance"><span class="n">5</span>Compliance &amp; red lines</h2>
+  <div class="callout red"><b>Hard red lines (non-negotiable in any phase):</b>
+    <ul style="margin:6px 0 0">
+      <li><b>No LinkedIn scraping</b> — live ToS §8.2 prohibition, enforceable via contract independent of CFAA (hiQ aftermath).</li>
+      <li>"Publicly available" is <b>not</b> a cross-border green light: India DPDPA's exemption is narrow (self-posted data, no cross-enrichment); Indonesia has none.</li>
+      <li>No new source site without a <b>logged per-site ToS review</b> in the registry.</li>
+      <li>No personal credentials — vaulted service accounts only (v2+).</li>
+      <li>No indefinite retention of non-applicant data — purge job is a launch blocker, not a fast-follow.</li>
+    </ul>
+  </div>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Jurisdiction</th><th>Lawful basis for sourced data (v1 posture)</th></tr></thead>
+    <tbody>
+      <tr><td>India (DPDPA)</td><td>§3(2)(b) publicly-available exemption — narrow: self-posted job-board data only, no enrichment across sources pre-consent</td></tr>
+      <tr><td>Singapore (PDPA)</td><td>Deemed consent for job-portal-posted data — but time-bound retention and no multi-employer forwarding without fresh consent</td></tr>
+      <tr><td>Malaysia (PDPA '24)</td><td>Opt-in ask on first touch; biometric/sensitive fields never sourced</td></tr>
+      <tr><td>Indonesia (UU PDP)</td><td>No public-data exemption — consent-first market: pool + inbound only until legal review clears sourcing</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="platform"><span class="n">6</span>Platform integration (what we build vs reuse)</h2>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Piece</th><th>Build / reuse</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>BROWSER</code> step type + handler</td><td><b>Build</b></td><td>7th step type beside LLM/TOOL/WRITE/WAIT/CONTROL/VOICE; handler in step_executor</td></tr>
+      <tr><td>Browser Runtime Service</td><td><b>Build</b></td><td>New repo, k8s; Playwright pool, event stream via RTS</td></tr>
+      <tr><td>Site allowlist + ToS review registry</td><td><b>Build</b></td><td>Extend tool_registry: <code>ToolType.BROWSER</code> with per-site config packs</td></tr>
+      <tr><td>Datasets store (<code>candidate_pool</code>)</td><td><b>Build</b></td><td>Mongo collections + repo layer + pool_search/pool_write tools</td></tr>
+      <tr><td>HITL gates</td><td>Reuse</td><td><code>WAITING_FOR_HUMAN</code> + retry/resolve already shipped</td></tr>
+      <tr><td>Session recording &amp; replay</td><td>Reuse</td><td>session-media S3 path + RunInspector link</td></tr>
+      <tr><td>Audit/consent events</td><td>Reuse</td><td>Guardrail events with new event types (consent, scope-approval)</td></tr>
+      <tr><td>Metering</td><td>Reuse</td><td>Credits: bill browser-minutes + tokens (session-hour ≈ $0.08 + LLM cost)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="metrics"><span class="n">7</span>Success metrics</h2>
+  <ul>
+    <li><b>Task success:</b> ≥ 65% of browser-sourcing sessions complete without human rescue (plan for 60–75% real-world, <i>not</i> the 89–94% seen on academic benchmarks) — remainder hand off gracefully.</li>
+    <li><b>Sourcing yield:</b> ≥ 10 qualified profiles per session-hour on pilot boards; cost/profile tracked per site.</li>
+    <li><b>Recruiter outcomes (pilot pod):</b> time-to-first-contact in minutes (vs &gt;60% drop-off baseline); WhatsApp response ≥ 60% (vs ~30% call baseline); directional cost-per-hire −70% with pool-first + sourcing + screening combined.</li>
+    <li><b>Compliance (hard gates):</b> 100% of sourced records carry a full provenance tuple · 100% of outreach passes a logged HITL gate · 0 irreversible auto-actions · purge SLA met 100%.</li>
+  </ul>
+
+  <h2 id="phases"><span class="n">8</span>Phasing</h2>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Phase</th><th>Scope</th><th>Exit criteria</th></tr></thead>
+    <tbody>
+      <tr><td><b>P0 · Spike</b> (2–3 wk)</td><td>Playwright runtime POC on 1 board (logged-out), extraction schema, session recording</td><td>60%+ task success on 50 scripted sourcing tasks; replay works</td></tr>
+      <tr><td><b>P1 · Pilot</b> (4–6 wk)</td><td>BROWSER step + HITL gates + candidate_pool store + purge job; 1 recruiter pod, 2 boards, Malaysia only</td><td>Metrics above on 5 live reqs; legal sign-off on ToS reviews</td></tr>
+      <tr><td><b>P2 · Productize</b></td><td>Site config packs, India boards (DPDPA posture), credits billing, Datasets UI in admin (the demo's talent-pool table)</td><td>Second use case onboarded (non-recruiting) proving the primitive is generic</td></tr>
+      <tr><td><b>P3 · v2</b></td><td>Vaulted service-account auth for login-required sites; Tier-1 interactions beyond read</td><td>Security review; per-site legal review</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="risks"><span class="n">9</span>Risks &amp; open questions</h2>
+  <ul>
+    <li><b>ToS/legal drift</b> — boards can change terms; mitigation: per-site review log + kill switch per site. <i>Owner: legal.</i></li>
+    <li><b>Anti-bot arms race</b> — success rates may degrade; mitigation: honest pacing, partnerships where possible (some boards may prefer a data deal once we show volume). <i>Open: pursue official partnerships with JobStreet/apna in parallel?</i></li>
+    <li><b>Selector brittleness</b> — DOM changes break extraction; mitigation: confidence scores per field + nightly canary tasks per site.</li>
+    <li><b>Cost creep</b> — idle waits burn session-hours; mitigation: batch lookups per session, hard budgets per step.</li>
+    <li><b>Open:</b> does Datasets live in ghost_operators or as its own service? (Recommend: repo layer in ghost_operators for P1, split at P2 if a second collection type lands.)</li>
+    <li><b>Open:</b> Indonesia launch posture pending legal review (no public-data exemption).</li>
+  </ul>
+
+  <footer>
+    PRD v0.1 · grounded in 32 cited findings (recruiter_browseruse_research.md) · companion demo: recruiter-agent-workspace.html · candidate experience: subway-crew-onboarding.html<br>
+    Note: org process expects the BP Agent Design Framework review for new agent capabilities — the framework skill wasn't available in this session; route this PRD through that review before pilot sign-off.
+  </footer>
+</div>
+</body>
+</html>

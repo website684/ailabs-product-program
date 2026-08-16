@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PRD — Agent Templates &amp; Marketplace · AI Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══ Readable doc palette: white background, black text ═══ */
+:root{
+  --primary:#1B2D93; --primary-text:#1B2D93; --accent:#0953E5;
+  --primary-light:#e3ecff; --primary-lighter:#f1f4ff;
+  --async:#7c3aed; --async-light:#ede9fe;
+  --ok:#15803d; --ok-light:#dcfce7; --warn:#b45309; --warn-light:#fef3c7;
+  --err:#dc2626; --err-light:#fee2e2;
+  --bg:#ffffff; --surface:#ffffff; --muted:#f5f6fa;
+  --border:#e1e4e8; --border-2:#d1d5db;
+  --text:#111827; --text-2:#374151; --text-3:#6b7280;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --disp:"Poppins",var(--sans);
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px; --r-lg:14px;
+  --shadow:0 1px 2px rgba(17,24,39,.05),0 6px 18px -10px rgba(17,24,39,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.doc{max-width:880px;margin:0 auto;padding:36px 22px 100px}
+.back{font-size:12px;color:var(--accent);text-decoration:none;font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:18px 0 8px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:28px;height:3px;background:var(--accent);flex:none}
+h1{font-family:var(--disp);font-size:clamp(24px,4vw,34px);line-height:1.14;margin:0 0 10px;letter-spacing:-.025em;font-weight:800;text-wrap:balance}
+.lead{font-size:16.5px;color:var(--text-2);max-width:66ch}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:11px;color:var(--text-3);margin:14px 0 8px}
+.meta b{color:var(--text-2);font-weight:600}
+.badge{display:inline-block;font-size:10.5px;font-weight:650;border-radius:999px;padding:3px 11px}
+.badge.draft{background:var(--warn-light);color:var(--warn)}
+h2{font-family:var(--disp);font-size:19px;margin:42px 0 6px;letter-spacing:-.02em;font-weight:750}
+h2 .n{color:var(--accent);font-family:var(--mono);font-size:13px;margin-right:8px}
+h3{font-family:var(--disp);font-size:15px;margin:22px 0 6px;font-weight:650}
+p{margin:8px 0;max-width:74ch}
+li{margin-bottom:5px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:16px 20px;margin:14px 0}
+.callout{border-left:3px solid var(--accent);background:var(--primary-lighter);border-radius:0 var(--r) var(--r) 0;padding:12px 17px;margin:14px 0;font-size:13.5px}
+.callout.red{border-left-color:var(--err)}
+code{font-family:var(--mono);font-size:.86em;background:var(--muted);border:1px solid var(--border);padding:1px 6px;border-radius:5px}
+.tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);margin:12px 0}
+table{border-collapse:collapse;width:100%;min-width:600px}
+th,td{text-align:left;padding:9px 13px;border-top:1px solid var(--border);font-size:13px;vertical-align:top}
+th{border-top:none;background:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);font-weight:500}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--mono);font-size:11px;margin:10px 0}
+.flow .st{background:var(--surface);border:1.5px solid var(--border-2);border-radius:8px;padding:6px 11px;white-space:nowrap}
+.flow .st.hl{border-color:var(--accent);background:var(--primary-light);color:var(--primary);font-weight:700}
+.flow .ar{color:var(--text-3)}
+.kv{font-family:var(--mono);font-size:11px;color:var(--text-2);background:var(--muted);border:1px solid var(--border);border-radius:8px;padding:10px 13px;overflow-x:auto;line-height:1.7}
+.kv b{color:var(--accent)}
+.two{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.two{grid-template-columns:1fr 1fr}}
+footer{margin-top:56px;border-top:1px solid var(--border);padding-top:16px;font-size:12px;color:var(--text-3);font-family:var(--mono)}
+.toc{font-size:13px;columns:2;column-gap:30px;margin:10px 0 0;padding-left:18px}
+.toc li{break-inside:avoid}
+.toc a{color:var(--accent);text-decoration:none}
+@media(max-width:600px){.toc{columns:1}}
+
+/* live miniature preview ("screen grab" that never goes stale) */
+.shot{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0;background:#fff;box-shadow:var(--shadow)}
+.shot .frame{height:290px;overflow:hidden}
+.shot iframe{width:182%;height:527px;transform:scale(.55);transform-origin:0 0;border:0;pointer-events:none}
+.shot figcaption{font-size:11.5px;color:var(--text-3);padding:8px 13px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;background:var(--muted)}
+.shot figcaption a{color:var(--accent);text-decoration:none;white-space:nowrap}
+
+/* program ribbon — the four docs read as one program */
+.ribbon{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border:1px solid var(--border);background:var(--muted);border-radius:999px;padding:7px 16px;margin-bottom:22px;font-size:11.5px}
+.ribbon .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--text-3)}
+.ribbon a{color:var(--text-2);text-decoration:none}
+.ribbon a:hover{color:var(--accent)}
+.ribbon a.cur{color:var(--primary);font-weight:700}
+.ribbon i{color:var(--border-2);font-style:normal}
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="ribbon"><span class="k">AI LABS PRODUCT PROGRAM · AUG 2026</span> <a href="live-audit-16aug.html">Live audit</a> <i>·</i> <a href="browseruse-capability-prd.html">Browser-Use PRD</a> <i>·</i> <a href="templates-marketplace-prd.html" class="cur">Templates PRD</a> <i>·</i> <a href="roadmap-onepagers.html">Roadmap one-pagers</a> <i>·</i> <a href="marketplace-prototype.html">Prototypes ↗</a></div>
+  <a class="back" href="marketplace-prototype.html">→ open the clickable prototype</a>
+  <div class="eyebrow">AI Labs · Product Requirements Document</div>
+  <h1>Agent Templates &amp; the AI Employee Marketplace</h1>
+  <p class="lead">Turn the studio into a store. A template is a certified, versioned AI employee — Mia, Jack, Cole — that any org installs by binding its own knowledge, tools, and brand into declared slots. Ten minutes to a working agent stops being a demo claim and becomes the product.</p>
+  <div class="meta">
+    <span><b>Status</b> <span class="badge draft">DRAFT v0.1</span></span>
+    <span><b>Author</b> Anuj Saxena (Product) + AI Labs</span>
+    <span><b>Date</b> 16 Aug 2026</span>
+    <span><b>Research</b> templates_marketplace_research.md (29 cited findings)</span>
+    <span><b>Prototype</b> marketplace-prototype.html</span>
+  </div>
+
+  <div class="card">
+    <b>Contents</b>
+    <ol class="toc">
+      <li><a href="#why">Why templates, why now</a></li>
+      <li><a href="#anatomy">Template anatomy: fixed vs bound</a></li>
+      <li><a href="#install">The install experience</a></li>
+      <li><a href="#versioning">Versioning &amp; upgrades</a></li>
+      <li><a href="#marketplace">Marketplace shape</a></li>
+      <li><a href="#commercials">Commercials</a></li>
+      <li><a href="#platform">Platform integration</a></li>
+      <li><a href="#metrics">Metrics &amp; phasing</a></li>
+      <li><a href="#risks">Risks &amp; open questions</a></li>
+    </ol>
+  </div>
+
+  <h2 id="why"><span class="n">1</span>Why templates, why now</h2>
+  <p>Today every agent on the platform is built from a blank canvas. That has three costs:</p>
+  <ul>
+    <li><b>Time-to-value gap.</b> The deck promises a working agent in 10 minutes; a real Mia-class onboarding agent takes days of prompt, step, widget, and guardrail work by someone who understands the platform. The people we sell to — HR ops, staffing leads — are exactly the people the blank canvas excludes.</li>
+    <li><b>Repetition without leverage.</b> Every Subway-like customer needs the same onboarding workflow with different documents, tools, and branding. We rebuild the fixed 80% per customer and charge for the privilege of waiting.</li>
+    <li><b>The roster is marketing, not product.</b> Mia, Jack, Cole, Max, Ivy, Theo exist on the website as personas. Nothing in the product lets a customer "hire Mia". Templates make the roster literal: each persona is a certified template with an install button.</li>
+  </ul>
+  <div class="callout">The positioning already tells us the mental model: <b>"You don't buy software. You hire AI employees."</b> A marketplace listing is a candidate profile. Installing is onboarding a new hire: give them workspace access (knowledge, tools), a manager (HITL approver), and a uniform (brand). The install wizard should read like an onboarding checklist — our own product philosophy applied to ourselves.</div>
+  <p><b>Multi-tenancy is the hard part and the moat.</b> Each org has different knowledge bases, tool credentials, MCP endpoints, languages, and brand. A template system that survives contact with two customers has to draw a precise line between what the template owns and what the tenant owns. That line is this PRD's core design decision.</p>
+
+  <h2 id="anatomy"><span class="n">2</span>Template anatomy: three layers</h2>
+  <p>Every template package splits into <b>fixed</b> (versioned, certified, vendor-owned), <b>bound</b> (resolved per tenant at install), and <b>tunable</b> (safe prompt slots an org can edit without forking). Mapped to the real config model:</p>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Config field</th><th>Layer</th><th>Mechanism</th></tr></thead>
+    <tbody>
+      <tr><td><code>chat_workflow_steps</code> / <code>workflow_steps</code></td><td><b>Fixed</b></td><td>Immutable per template version. Steps, widgets, completion criteria, bindings ship as-is — this is the certified behavior.</td></tr>
+      <tr><td><code>tool_ids</code> / <code>mcp_servers</code></td><td><b>Fixed capability, bound instance</b></td><td>Template declares required <i>capability types</i> ("HRMS write", "WhatsApp send", "OCR extract"). Install resolves each to the org's actual tool/MCP credential. No secrets ever ship in the artifact (n8n rule). Platform-provided tools (WhatsApp BSP, OCR, calendar) are <b>always-available capabilities</b> — pre-certified, zero setup.</td></tr>
+      <tr><td><code>document_ids</code></td><td><b>Bound, always</b></td><td>Template defines document <i>slots</i> (required doc types + resync cadence, e.g. "HR policy pack", "store SOPs"). Org attaches its own KB at install (Lindy pattern). Never in the artifact.</td></tr>
+      <tr><td><code>guardrail_policy</code></td><td><b>Fixed floor, org-tightenable</b></td><td>Template ships a non-negotiable floor (e.g. Mia: pii_masking + consent events ON). Orgs may tighten, never loosen. Field-level manageability flags (Salesforce 2GP pattern) mark what upgrades may touch.</td></tr>
+      <tr><td><code>ui_config</code> / <code>voice</code></td><td><b>Bound, always</b></td><td>Brand theme, avatar, launcher; voice ID and telephony number. Template only fixes <i>whether</i> voice is supported.</td></tr>
+      <tr><td><code>language[]</code></td><td><b>Fixed certified set → bound subset</b></td><td>Template ships languages its prompts/voice were certified in; org activates a subset. New language = re-certification, not a config edit.</td></tr>
+      <tr><td>Prompt sub-slots</td><td><b>Tunable</b></td><td>Marked regions inside step prompts ("tone of greeting", "escalation phrasing") editable via natural language within the guardrail floor (Sierra Ghostwriter / Fountain Cue pattern). No fork, no new version.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="kv"><b>template package (v1)</b><br>
+{ template_id, version, persona{name, role, story}, agent_type,<br>
+&nbsp;&nbsp;fixed{ steps[], widgets[], guardrail_floor, certified_languages[], prompt_slots[] },<br>
+&nbsp;&nbsp;required_bindings{ tool_capabilities[], mcp_capabilities[], document_slots[], channels[] },<br>
+&nbsp;&nbsp;defaults{ ui_config, quick_replies, fallback_message },<br>
+&nbsp;&nbsp;billing{ outcome_step_id, price_model }, cert{ stage, reviewed_at, reviewer } }</div>
+
+  <h2 id="install"><span class="n">3</span>The install experience</h2>
+<figure class="shot"><div class="frame"><iframe src="marketplace-prototype.html" title="preview" loading="lazy" tabindex="-1"></iframe></div><figcaption><span>How it looks: the roster storefront inside the console — letter-tile personas, install counts, price per outcome. Fully clickable.</span><a href="marketplace-prototype.html">open the real thing ↗</a></figcaption></figure>
+  <div class="flow">
+    <span class="st">Browse roster</span><span class="ar">→</span>
+    <span class="st">Preview (workflow map · sample chat · what you'll configure)</span><span class="ar">→</span>
+    <span class="st hl">Install wizard: bind 4 things</span><span class="ar">→</span>
+    <span class="st">Preflight</span><span class="ar">→</span>
+    <span class="st">Sandbox test on YOUR data</span><span class="ar">→</span>
+    <span class="st">Activate</span>
+  </div>
+  <p>The installer configures <b>only the bound layer</b> — four things, in order:</p>
+  <ol>
+    <li><b>Knowledge</b> — attach documents to each declared slot (or pick existing KB collections). Ingestion/indexing starts immediately, in the background.</li>
+    <li><b>Connections</b> — resolve each required capability to an org tool/MCP. Platform-provided capabilities show as "Ready ✓" with zero work; org-specific ones (HRMS endpoint) open the existing tool form inline.</li>
+    <li><b>Brand &amp; channels</b> — UiConfig theme, languages subset, channels (web, WhatsApp, voice). One install binds all channels (Microsoft 365 Agent Store pattern).</li>
+    <li><b>People</b> — HITL approver role, escalation inbox, credit budget cap.</li>
+  </ol>
+  <p><b>Preflight blocks activation until:</b> every capability resolves and authenticates; document slots ingested and indexed; guardrail floor intact; selected languages ⊆ certified set; theme renders; the template's scripted eval set passes in sandbox against the org's real bindings. Then a mandatory <b>sandbox conversation</b> — the admin talks to their Mia on their data before anyone else can. Activation flips the alias (§4); no publish without a passed preflight.</p>
+  <div class="callout"><b>Time-to-value target: under 60 minutes</b> from "Install" to activated agent when documents exist and only platform capabilities are needed; same-day when an org tool must be connected. Sierra's 4–10 week white-glove onboarding is the anti-pattern; Copilot Studio's guided one-click install is the benchmark. The wizard is the product demo — every minute in it must feel like progress, not configuration.</div>
+
+  <h2 id="versioning"><span class="n">4</span>Versioning &amp; upgrades (the part that keeps working at customer #40)</h2>
+  <ul>
+    <li><b>Version/alias split.</b> Template versions are immutable and numbered; each installed agent is an <b>alias pointing at a version + its bindings</b>. Upgrade = repoint the alias after preflight re-runs. Zero-downtime, instant rollback (AWS Bedrock alias / Agentforce pattern).</li>
+    <li><b>Draft → Commit → Activate</b> lifecycle for template authors; only committed versions are installable, and commit is the certification checkpoint.</li>
+    <li><b>Per-field manageability flags</b> decide what an upgrade may touch: vendor-managed (steps, floor) auto-propagates; org-bound (bindings, theme, tunable slots) is never overwritten.</li>
+    <li><b>Publisher-initiated, targeted push upgrades</b> — choose which installs, which version, when; never silent push-to-all. Changelog + re-run preflight per tenant; failures hold the old alias.</li>
+    <li><b>Fork as escape hatch.</b> An org needing structural changes forks into a plain custom agent — explicitly severing upgrade propagation, stated at fork time (Zapier model). Forking is a feature, not a failure: the template system feeds the custom studio.</li>
+  </ul>
+
+  <h2 id="marketplace"><span class="n">5</span>Marketplace shape</h2>
+  <ul>
+    <li><b>The roster is the storefront.</b> Six personas as flagship first-party templates ("Official · by BetterPlace"), browsable by industry (QSR, retail, logistics, BFSI) and function (hire, onboard, verify, train, sell). Industry variants are distinct certified templates (Mia for QSR ≠ Mia for logistics), not one template reskinned — the Agentforce vertical-library pattern.</li>
+    <li><b>Quality signals that matter:</b> live install count, outcome rate (resolution/completion), median time-to-activate — on the card. Star ratings alone are noise. The GPT Store's real failure was publish-then-invisible: 95%+ of listings undiscovered. Curated categories over infinite shelf.</li>
+    <li><b>Certification is staged</b> (ServiceNow pattern): scope/architecture review of declared bindings → automated checks on every build (guardrail floor intact, no secrets in artifact, eval set passes) → manual review before listing (prompt injection, policy). Any change to fixed logic = new version + full re-cert. Automated-only review is how policy-violating GPTs stayed live — we don't repeat it.</li>
+    <li><b>Partner templates (phase 3):</b> same certification gate + signed revenue-share; partner badge distinct from Official. Not before the first-party roster proves the rails.</li>
+  </ul>
+
+  <h2 id="commercials"><span class="n">6</span>Commercials</h2>
+  <p>Hybrid metering — every single-axis pricer in this market added a second axis within a year (Agentforce's flat $2/conversation, Sierra's pure per-outcome both bent):</p>
+  <ul>
+    <li><b>Credits remain the substrate</b> (existing billing) — consumption floor for every installed agent.</li>
+    <li><b>Per-outcome tier on top,</b> defined <i>in the template</i>: the template marks its billable outcome step (<code>billing.outcome_step_id</code> — "candidate fully onboarded", "document verified"). Tiered by outcome value (Intercom Fin's $0.99 routine vs $9.99 high-value pattern), priced in ₹ per outcome on the listing. The card says what hiring this employee costs per unit of work — nothing else in the India/SEA market prices this way.</li>
+    <li><b>Enterprise:</b> committed credit bundles + private templates (org-internal marketplace of their own certified agents).</li>
+  </ul>
+
+  <h2 id="platform"><span class="n">7</span>Platform integration (build vs reuse)</h2>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Piece</th><th>Build/reuse</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Template registry (packages, versions, cert state)</td><td><b>Build</b></td><td>New module in ghost_operators; package = superset of AgentConfig with slots</td></tr>
+      <tr><td>Install engine (binding resolution → agent instance + alias)</td><td><b>Build</b></td><td>Emits a normal registered agent; runtime unchanged</td></tr>
+      <tr><td>Preflight + sandbox test</td><td><b>Build</b></td><td>Doubles as the draft-testing capability the registry lacks today (live-audit P1)</td></tr>
+      <tr><td>Marketplace UI (storefront, listing, wizard)</td><td><b>Build</b></td><td>mfe; prototype adjacent to this PRD</td></tr>
+      <tr><td>Agent registry, clone, modes</td><td>Reuse</td><td>Installed agent = registry row with <code>template_ref</code></td></tr>
+      <tr><td>Tool/MCP registries</td><td>Reuse</td><td>Capability-type matching added on top</td></tr>
+      <tr><td>Guardrails org/agent resolution</td><td>Reuse</td><td>Floor = template layer above org layer</td></tr>
+      <tr><td>Credits/billing</td><td>Reuse</td><td>+ outcome-step metering event</td></tr>
+      <tr><td>KB ingestion (knowledge_base + embedzilla)</td><td>Reuse</td><td>Slot ingest = existing upload path</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="metrics"><span class="n">8</span>Metrics &amp; phasing</h2>
+  <ul>
+    <li><b>North star: median install→activate time</b> (target &lt;60 min) and <b>day-7 outcome count per install</b> (an installed agent that does no work in a week is a failed install).</li>
+    <li>Guard metrics: preflight pass rate (low = binding UX broken), upgrade adoption rate, fork rate (high = fixed layer drawn wrong), sandbox-test completion before activate = 100% by construction.</li>
+  </ul>
+  <div class="tblwrap"><table>
+    <thead><tr><th>Phase</th><th>Scope</th><th>Exit</th></tr></thead>
+    <tbody>
+      <tr><td><b>P0</b> (3–4 wk)</td><td>Template package schema + install engine, no UI: install "Mia — QSR onboarding" via API into 2 test orgs with different KB/tools</td><td>Same template, two working tenants, zero code between installs</td></tr>
+      <tr><td><b>P1</b> (4–6 wk)</td><td>Marketplace UI: roster storefront, listing page, 4-step install wizard, preflight, sandbox; 3 first-party templates (Mia, Jack, Theo)</td><td>One real customer self-serves an install &lt;60 min</td></tr>
+      <tr><td><b>P2</b></td><td>Version/alias upgrades, targeted push, tunable prompt slots, outcome billing, industry variants</td><td>First template upgrade propagated to all installs without breakage</td></tr>
+      <tr><td><b>P3</b></td><td>Partner program: external template authors, revenue share, cert pipeline at scale; org-private templates</td><td>First partner template live with paying installs</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="risks"><span class="n">9</span>Risks &amp; open questions</h2>
+  <ul>
+    <li><b>The fixed/bound line will be wrong somewhere.</b> Mitigation: fork-rate as a tripwire per template; tunable slots absorb the most common "just this one prompt" pressure.</li>
+    <li><b>Upgrade trust.</b> One bad push to installed tenants poisons the model. Mitigation: preflight-per-tenant before repoint, staged rollout, instant alias rollback.</li>
+    <li><b>Certification bottleneck</b> at partner phase. Mitigation: don't open partner authoring until first-party cert pipeline is boringly repeatable.</li>
+    <li><b>Open:</b> does an installed agent's <code>template_ref</code> lock the builder UI (view-only fixed layer) or hide it? Prototype assumes view-with-lock-badges.</li>
+    <li><b>Open:</b> outcome-step billing needs finance sign-off on revenue recognition per outcome type.</li>
+    <li><b>Open:</b> template-level analytics benchmarking across tenants (anonymized outcome rates as a listing signal) — privacy review needed.</li>
+  </ul>
+
+  <footer>PRD v0.1 · grounded in 29 cited findings (templates_marketplace_research.md) · clickable prototype: marketplace-prototype.html · companions: browseruse-capability-prd.html · live-audit-16aug.html · context-pack/<br>
+  Process note: route through the BP Agent Design Framework review before pilot sign-off (framework skill unavailable in Claude sessions — manual step).</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Audit — AI Labs Agent Creation Flow · 16 Aug 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══ Readable doc palette: white background, black text ═══ */
+:root{
+  --primary:#1B2D93; --primary-text:#1B2D93; --accent:#0953E5;
+  --primary-light:#e3ecff; --primary-lighter:#f1f4ff;
+  --async:#7c3aed; --async-light:#ede9fe;
+  --ok:#15803d; --ok-light:#dcfce7; --warn:#b45309; --warn-light:#fef3c7;
+  --err:#dc2626; --err-light:#fee2e2;
+  --bg:#ffffff; --surface:#ffffff; --muted:#f5f6fa;
+  --border:#e1e4e8; --border-2:#d1d5db;
+  --text:#111827; --text-2:#374151; --text-3:#6b7280;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --disp:"Poppins",var(--sans);
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px; --r-lg:14px;
+  --shadow:0 1px 2px rgba(17,24,39,.05),0 6px 18px -10px rgba(17,24,39,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.doc{max-width:900px;margin:0 auto;padding:36px 22px 100px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:6px 0 8px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:28px;height:3px;background:var(--accent);flex:none}
+h1{font-family:var(--disp);font-size:clamp(23px,4vw,32px);line-height:1.15;margin:0 0 10px;letter-spacing:-.025em;font-weight:800;text-wrap:balance}
+.lead{font-size:16px;color:var(--text-2);max-width:70ch}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:11px;color:var(--text-3);margin:14px 0 26px}
+.meta b{color:var(--text-2)}
+h2{font-family:var(--disp);font-size:18px;margin:36px 0 10px;font-weight:750;letter-spacing:-.02em}
+.finding{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:15px 19px;margin-bottom:12px}
+.finding .t{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.finding .t b{font-size:14.5px}
+.sev{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;border-radius:999px;padding:3px 10px;flex:none}
+.sev.p0{background:var(--err-light);color:var(--err);border:1px solid var(--err)}
+.sev.p1{background:var(--warn-light);color:var(--warn)}
+.sev.p2{background:var(--async-light);color:var(--async)}
+.sev.good{background:var(--ok-light);color:var(--ok)}
+.finding p{margin:7px 0 0;font-size:13px;color:var(--text-2)}
+.finding .ev{display:block;font-family:var(--mono);font-size:11px;color:#c9d1d9;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:8px 12px;margin-top:9px;overflow-x:auto;white-space:pre}
+.finding .fix{margin-top:8px;font-size:12.5px;color:var(--text-2)}
+.finding .fix b{color:var(--accent);font-weight:650}
+.callout{border-left:3px solid var(--err);background:var(--surface);border-radius:0 var(--r) var(--r) 0;padding:13px 17px;margin:16px 0;font-size:13.5px}
+.callout.y{border-left-color:var(--accent)}
+code{font-family:var(--mono);font-size:.86em;background:var(--muted);border:1px solid var(--border);padding:1px 6px;border-radius:5px}
+footer{margin-top:48px;border-top:1px solid var(--border);padding-top:16px;font-size:12px;color:var(--text-3);font-family:var(--mono)}
+
+/* program ribbon — the four docs read as one program */
+.ribbon{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border:1px solid var(--border);background:var(--muted);border-radius:999px;padding:7px 16px;margin-bottom:22px;font-size:11.5px}
+.ribbon .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--text-3)}
+.ribbon a{color:var(--text-2);text-decoration:none}
+.ribbon a:hover{color:var(--accent)}
+.ribbon a.cur{color:var(--primary);font-weight:700}
+.ribbon i{color:var(--border-2);font-style:normal}
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="ribbon"><span class="k">AI LABS PRODUCT PROGRAM · AUG 2026</span> <a href="live-audit-16aug.html" class="cur">Live audit</a> <i>·</i> <a href="browseruse-capability-prd.html">Browser-Use PRD</a> <i>·</i> <a href="templates-marketplace-prd.html">Templates PRD</a> <i>·</i> <a href="roadmap-onepagers.html">Roadmap one-pagers</a> <i>·</i> <a href="marketplace-prototype.html">Prototypes ↗</a></div>
+  <div class="eyebrow">AI Labs · Live product audit</div>
+  <h1>Agent creation flow, driven end-to-end in production</h1>
+  <p class="lead">Hands-on walkthrough on 16 Aug 2026 — QA, UAT, then production (ailabs.betterplace.co.in, org BetterPlace, super_admin/anuj sessions). One P0 caught with full evidence, several findings the static code audit predicted now confirmed live, and a few things the current build genuinely gets right.</p>
+  <div class="meta">
+    <span><b>QA/UAT</b> ghost-operators tier down (502 on every call)</span>
+    <span><b>Prod</b> walkthrough completed to builder</span>
+    <span><b>Test artifact</b> draft "Claude UX Audit - safe to delete" · id 6a811d4a…</span>
+  </div>
+
+  <div class="callout"><b>P0 — read this first.</b> The registry serves the <i>wrong agent</i> for a freshly created agent's ID. Reads are scrambled at the API level, on two different screens, after hard refresh. Until it's fixed, treat any by-ID operation on recent drafts as untrustworthy — <b>including DELETE</b>. The test draft was deliberately left in place; remove it from the DB side after the fix, not through the UI.</div>
+
+  <h2>P0 — correctness</h2>
+  <div class="finding">
+    <div class="t"><span class="sev p0">P0</span><b>Agent ID resolves to a different agent's data (production)</b></div>
+    <p>Created draft "Claude UX Audit - safe to delete" (Agent Orchestrator). Its detail page and its builder both render <b>Payroll Template Normalizer — LOTS</b> — name, description, full system prompt, type "Chatbot", status "Published". Survives hard refresh and a forced fresh navigation. The builder then flags the mismatched data as "unsaved changes" — one Save Draft click away from cross-writing two production agents.</p>
+    <span class="ev">GET /aiapi/ghost-operators/v1/org/9cb31654…/agents/6a811d4a-2590-4bbe-a817-319069ad15e7 → 200 (×2, correct id in URL)
+rendered: "Payroll Template Normalizer — LOTS" (wrong document)
+localStorage: no draft/builder keys → not client persistence
+registry list (sorted by last-updated): new draft ABSENT — established agents (9dbbe0da…) load correctly → bug is scoped to the CREATE path (indexing/cache of fresh agents)</span>
+    <div class="fix"><b>Where to look:</b> registry GET-by-id for fresh drafts and the Redis config cache (<code>agent:{org_id}:{agent_id}</code>) — a mis-keyed cache write on create, or an id-ignoring fallback on read, fits every symptom. Add a regression test: create draft → GET by id → assert name matches. Consider an FE assert too: if <code>response.agentId ≠ route.agentId</code>, refuse to render and log.</div>
+  </div>
+
+  <h2>P1 — trust &amp; flow</h2>
+  <div class="finding">
+    <div class="t"><span class="sev p1">P1</span><b>Every failure wears the same mask: "Something went wrong"</b></div>
+    <p>QA/UAT backends were fully down (502 on every ghost-operators call). The UI showed the identical generic copy for: login failure, registry load, agent summary, and create — four different failures, one message, plus stacked duplicate toasts and an inline error saying the same thing a third time.</p>
+    <span class="ev">login POST → 502 → "Something went wrong. Please try again."
+GET /agents, /agents/summary → 502 → two toasts + inline empty-state, all generic
+POST /agents → 502 → toast "Create agent failed / Failed to create agent" (title = body)</span>
+    <div class="fix"><b>Fix:</b> map gateway-level failures (502/503/timeout) to a distinct "platform unreachable" state with a status link — retrying can't help and the copy shouldn't pretend it might. Deduplicate toast+inline. Error titles and bodies must not repeat each other.</div>
+  </div>
+  <div class="finding">
+    <div class="t"><span class="sev p1">P1</span><b>"Create &amp; Continue" doesn't continue</b></div>
+    <p>The wizard shows a 5-step rail (7 for Orchestrator: Name it → How it talks → What it knows → Safety → Build → DAG → Review), but Create &amp; Continue creates the draft and exits to the read-only detail page. Steps 2–7 never happen in the flow that advertised them; configuration requires finding "Edit Configuration" and re-entering a builder that repeats step 1.</p>
+    <div class="fix"><b>Fix:</b> either continue into step 2 with the draft saved in the background (best), or rename the button and drop the step rail from the create screen. The rail is currently a broken promise at the exact moment of highest intent.</div>
+  </div>
+  <div class="finding">
+    <div class="t"><span class="sev p1">P1</span><b>Draft agents can't be tested (confirmed live)</b></div>
+    <p>"Test Run" is disabled for drafts in the registry (Recruitement agent row) with no explanation of what would unlock it. Predicted by the April review; still true. Testing is how builders learn — forcing publish-to-test inverts the loop.</p>
+    <div class="fix"><b>Fix:</b> sandbox test for drafts (the Templates PRD's preflight/sandbox machinery is the same investment). Interim: tooltip stating exactly why it's disabled and what to complete.</div>
+  </div>
+
+  <h2>P2 — copy &amp; polish</h2>
+  <div class="finding">
+    <div class="t"><span class="sev p2">P2</span><b>Raw template variable shown to admins</b></div>
+    <p>Default greeting renders as <code>Hi, I am {agent_name}. How can I help you today?</code> — the placeholder is neither substituted nor explained on the detail page.</p>
+  </div>
+  <div class="finding">
+    <div class="t"><span class="sev p2">P2</span><b>"Not visible to end users" is not true</b></div>
+    <p>Profile section: "How operators recognize this agent. Not visible to end users." The agent name/avatar surface in the embedded chat header. Same misleading copy our static audit flagged in March-era code — still shipping.</p>
+  </div>
+  <div class="finding">
+    <div class="t"><span class="sev p2">P2</span><b>ACTIVE = 0 while 20 agents are Published</b></div>
+    <p>The stat row reads Total 26 · Published 20 · Draft 6 · <b>Active 0</b>. Whatever "Active" measures, showing zero next to twenty published agents reads as either broken telemetry or a damning adoption metric. Neither belongs on the default screen unexplained.</p>
+  </div>
+  <div class="finding">
+    <div class="t"><span class="sev p2">P2</span><b>Raw "DAG" in the primary wizard nav; type descriptions never say the word "workflow" plainly</b></div>
+    <p>Orchestrator's step rail includes a step literally named "DAG". The type card says "a chat + widget interface over a DAG" — good copy otherwise, but the one term the target admin won't know is the one left unexplained. ("Recruitement agent" typo in prod registry data is a reminder that no spellcheck/nudge exists on names.)</p>
+  </div>
+
+  <div class="finding">
+    <div class="t"><span class="sev p2">P2</span><b>Registry rows aren't clickable; wizard rail isn't either</b></div>
+    <p>Clicking an agent row does nothing (only the name text navigates); clicking a step in the builder's progress rail does nothing (Next-only navigation). Both look interactive and aren't.</p>
+  </div>
+  <div class="finding">
+    <div class="t"><span class="sev p2">P2</span><b>Readiness banner counts problems it won't name</b></div>
+    <p>"This agent isn't ready to publish. 1 thing left to do: Complete setup in the Builder" — the right pattern (blockers surfaced on the detail page) undermined by refusing to say which thing. Link the actual gate.</p>
+  </div>
+  <div class="finding">
+    <div class="t"><span class="sev good">GOOD</span><b>Builder handles variables properly — only the detail page doesn't</b></div>
+    <p>"How it talks" offers +User Name / +Email ID / +Agent Name chips and explains runtime substitution; "What it knows" cleanly splits KB / Tools / MCP with agent-level vs per-step scoping notes. The P2 above is a detail-page rendering gap, not a platform gap.</p>
+  </div>
+  <h2>What the current build gets right</h2>
+  <div class="finding">
+    <div class="t"><span class="sev good">GOOD</span><b>Worth keeping as-is</b></div>
+    <p>· Two-type simplification (Chat only Bot / Agent Orchestrator) with honest use-case descriptions — better than the old three-way split.<br>
+    · Plain-language step rail (Name it / How it talks / What it knows / Safety) — the exact renaming our redesign proposed, already live.<br>
+    · Type switch preserves entered fields; type locked after creation with a clear explanation line.<br>
+    · Guardrails on detail page show org inheritance per flag ("Inherit (org: on)") — effective-value transparency done right.<br>
+    · Create form kept all input through a full backend failure (QA) — no data loss on error.<br>
+    · Unsaved-changes guard on builder navigation (it even caught the P0's corrupted hydration).</p>
+  </div>
+
+  <div class="callout y"><b>Strengthened recommendation set:</b> (1) fix the P0 id-resolution bug and add the regression test before anything else; (2) failure-state taxonomy — platform-down vs validation vs permission, each with distinct copy; (3) make Create &amp; Continue continue; (4) draft sandbox testing (doubles as Templates preflight); (5) the terminology pass (DAG, Active, placeholder rendering) from the existing 144-item backlog. Items 2–5 are the same "missing translation" theme as the static audit — now with production evidence attached.</div>
+
+  <footer>Audited hands-on via Chrome session · screenshots in session transcript · test draft 6a811d4a… intentionally not deleted (see P0) · companion docs: browseruse-capability-prd.html · templates-marketplace-prd.html · context-pack/</footer>
+</div>
+</body>
+</html>

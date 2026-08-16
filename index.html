@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Labs — Product Program · Artifacts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1B2D93; --accent:#0953E5;
+  --primary-light:#e3ecff; --primary-lighter:#f1f4ff;
+  --async:#7c3aed; --async-light:#ede9fe;
+  --ok:#15803d; --ok-light:#dcfce7; --warn:#b45309; --warn-light:#fef3c7;
+  --bg:#ffffff; --surface:#ffffff; --muted:#f5f6fa;
+  --border:#e1e4e8; --border-2:#d1d5db;
+  --text:#111827; --text-2:#374151; --text-3:#6b7280;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --disp:"Poppins",var(--sans);
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --shadow:0 1px 2px rgba(17,24,39,.05),0 6px 18px -10px rgba(17,24,39,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.doc{max-width:920px;margin:0 auto;padding:44px 22px 100px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 10px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:28px;height:3px;background:var(--accent);flex:none}
+h1{font-family:var(--disp);font-size:clamp(26px,4.4vw,38px);line-height:1.12;margin:0 0 10px;letter-spacing:-.025em;font-weight:800;text-wrap:balance}
+.lead{font-size:16.5px;color:var(--text-2);max-width:66ch;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:11px;color:var(--text-3);margin:16px 0 34px}
+.meta b{color:var(--text-2)}
+h2{font-family:var(--disp);font-size:17px;margin:34px 0 12px;font-weight:750;letter-spacing:-.01em}
+h2 small{font-family:var(--mono);font-size:10.5px;color:var(--text-3);font-weight:400;margin-left:8px;letter-spacing:.05em}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+a.card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:13px;box-shadow:var(--shadow);padding:15px 18px;text-decoration:none;color:var(--text);transition:border-color .15s}
+a.card:hover{border-color:var(--accent)}
+a.card b{font-family:var(--disp);font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+a.card p{margin:5px 0 0;font-size:12.5px;color:var(--text-2)}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;border-radius:999px;padding:2px 8px;flex:none}
+.tag.proto{background:var(--primary-light);color:var(--primary)}
+.tag.doc{background:var(--async-light);color:var(--async)}
+.tag.audit{background:#fee2e2;color:#dc2626}
+.tag.md{background:var(--muted);color:var(--text-3);border:1px solid var(--border)}
+.note{border-left:3px solid var(--warn);background:var(--warn-light);border-radius:0 10px 10px 0;padding:11px 16px;margin:26px 0 0;font-size:12.5px;color:var(--text-2)}
+footer{margin-top:44px;border-top:1px solid var(--border);padding-top:16px;font-size:12px;color:var(--text-3);font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="doc">
+  <div class="eyebrow">BetterPlace AI Labs · Product program</div>
+  <h1>The AI employee product program — artifacts</h1>
+  <p class="lead">Everything in one place: what's broken today, the platform bets, the roadmap, and clickable prototypes of where we're going. Start with the live audit, end by clicking through the marketplace.</p>
+  <div class="meta">
+    <span><b>Owner</b> Anuj Saxena · Product</span>
+    <span><b>Updated</b> 16 Aug 2026</span>
+    <span><b>Status</b> internal working artifacts</span>
+  </div>
+
+  <h2>Read first <small>THE ARGUMENT, IN ORDER</small></h2>
+  <div class="grid">
+    <a class="card" href="live-audit-16aug.html"><b><span class="tag audit">AUDIT</span> Live production audit</b><p>The agent creation flow, driven end-to-end in prod. One P0 with full evidence, plus what already works.</p></a>
+    <a class="card" href="roadmap-onepagers.html"><b><span class="tag doc">ROADMAP</span> Seven capability one-pagers</b><p>Artifacts, workspace connectors, feedback, widgets, WhatsApp, the Intelligence API, and Chat — why, how, ship-first.</p></a>
+    <a class="card" href="browseruse-capability-prd.html"><b><span class="tag doc">PRD</span> Browser Use + governed data store</b><p>Give agents a browser for the web that has no API; keep what they find in a governed talent pool.</p></a>
+    <a class="card" href="templates-marketplace-prd.html"><b><span class="tag doc">PRD</span> Agent Templates &amp; Marketplace</b><p>Turn the studio into a store: certified AI employees, installed by binding knowledge, tools, and brand.</p></a>
+  </div>
+
+  <h2>Click through <small>PROTOTYPES — ALL INTERACTIVE</small></h2>
+  <div class="grid">
+    <a class="card" href="marketplace-prototype.html"><b><span class="tag proto">IN-APP</span> AI Employee Marketplace</b><p>Storefront → Mia's listing → 4-step install → preflight → sandbox test → live. The product-language build.</p></a>
+    <a class="card" href="recruiter-agent-workspace.html"><b><span class="tag proto">IN-APP</span> Recruiter Agent workspace</b><p>Req intake → pool rediscovery → live browser-sourcing session → outreach → hire → onboarding handoff.</p></a>
+    <a class="card" href="subway-crew-onboarding.html"><b><span class="tag proto">CANDIDATE</span> Crew onboarding &amp; verification</b><p>White-labeled candidate chat: consent, ID + OCR, liveness, async checks, AI interview, training reels.</p></a>
+    <a class="card" href="ailabs-admin-onboarding.html"><b><span class="tag proto">IN-APP</span> Admin — onboarding solution view</b><p>Blueprint, agent config, verification DAG, candidate runs with case review, capability map.</p></a>
+    <a class="card" href="builder-browseruse-placement.html"><b><span class="tag proto">IN-APP</span> Builder — web browsing placement</b><p>Where browsing lives in the creation journey: org task, picker tab, scope card, publish gates.</p></a>
+  </div>
+
+  <h2>Evidence <small>RESEARCH APPENDICES · 124 CITED FINDINGS</small></h2>
+  <div class="grid">
+    <a class="card" href="onboarding_research_blueprint.md"><b><span class="tag md">MD</span> Onboarding &amp; verification research</b><p>63 findings: chat-first completion, OCR capture, liveness, DPI, compliance across India/SEA.</p></a>
+    <a class="card" href="recruiter_browseruse_research.md"><b><span class="tag md">MD</span> Recruiting &amp; browser-use research</b><p>32 findings: sourcing agents, browser-agent infrastructure, talent-data law.</p></a>
+    <a class="card" href="templates_marketplace_research.md"><b><span class="tag md">MD</span> Templates &amp; marketplace research</b><p>29 findings: template stores, multi-tenant versioning, vertical agent pricing.</p></a>
+  </div>
+
+  <div class="note"><b>Internal working material.</b> Prototypes use a real brand as a white-label example and demo data throughout — nothing here is a customer commitment or a live product surface.</div>
+
+  <footer>BetterPlace AI Labs · product program artifacts · prototypes are self-contained HTML — no backend required</footer>
+</div>
+</body>
+</html>

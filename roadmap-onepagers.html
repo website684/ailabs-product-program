@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Labs — Roadmap One-Pagers · Anuj Saxena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══ Readable doc palette: white background, black text ═══ */
+:root{
+  --primary:#1B2D93; --primary-text:#1B2D93; --accent:#0953E5;
+  --primary-light:#e3ecff; --primary-lighter:#f1f4ff;
+  --async:#7c3aed; --async-light:#ede9fe;
+  --ok:#15803d; --ok-light:#dcfce7; --warn:#b45309; --warn-light:#fef3c7;
+  --err:#dc2626; --err-light:#fee2e2;
+  --bg:#ffffff; --surface:#ffffff; --muted:#f5f6fa;
+  --border:#e1e4e8; --border-2:#d1d5db;
+  --text:#111827; --text-2:#374151; --text-3:#6b7280;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --disp:"Poppins",var(--sans);
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px; --r-lg:14px;
+  --shadow:0 1px 2px rgba(17,24,39,.05),0 6px 18px -10px rgba(17,24,39,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.doc{max-width:880px;margin:0 auto;padding:36px 22px 100px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:6px 0 8px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:28px;height:3px;background:var(--accent);flex:none}
+h1{font-family:var(--disp);font-size:clamp(23px,4vw,32px);line-height:1.14;margin:0 0 10px;letter-spacing:-.025em;font-weight:800;text-wrap:balance}
+.lead{font-size:16px;color:var(--text-2);max-width:70ch}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:11px;color:var(--text-3);margin:14px 0 8px}
+.meta b{color:var(--text-2)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 8px}
+.toc a{color:var(--text-2);font-size:12px;text-decoration:none;border:1px solid var(--border-2);border-radius:999px;padding:5px 13px}
+.toc a:hover{color:var(--accent);border-color:var(--accent)}
+.pager{background:#fbfcfe;border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:24px 28px;margin:26px 0}
+.pager .num{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.1em}
+.pager h2{font-family:var(--disp);font-size:21px;margin:4px 0 2px;font-weight:750;letter-spacing:-.02em}
+.oneliner{color:var(--text-2);font-size:14px;margin:0 0 16px;font-style:italic}
+.pager h3{font-family:var(--disp);font-size:13.5px;margin:18px 0 6px;font-weight:700;color:var(--accent);letter-spacing:.02em}
+.pager p{margin:7px 0;font-size:13.5px;color:var(--text-2);max-width:76ch}
+.pager p b{color:var(--text)}
+.pager ul{margin:6px 0;padding-left:20px;font-size:13.5px;color:var(--text-2)}
+.pager li{margin-bottom:5px}
+.pager li b{color:var(--text)}
+code{font-family:var(--mono);font-size:.86em;background:var(--muted);border:1px solid var(--border);padding:1px 6px;border-radius:5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.05em;border-radius:999px;padding:3px 10px;background:var(--muted);border:1px solid var(--border);color:var(--text-3)}
+.chip.have{color:var(--ok);border-color:var(--ok)}
+.chip.build{color:var(--warn);border-color:var(--warn)}
+.ship{border-left:3px solid var(--accent);background:var(--muted);border-radius:0 var(--r) var(--r) 0;padding:10px 15px;margin-top:14px;font-size:13px;color:var(--text-2)}
+.ship b{color:var(--text)}
+footer{margin-top:48px;border-top:1px solid var(--border);padding-top:16px;font-size:12px;color:var(--text-3);font-family:var(--mono)}
+
+/* live miniature preview ("screen grab" that never goes stale) */
+.shot{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0;background:#fff;box-shadow:var(--shadow)}
+.shot .frame{height:290px;overflow:hidden}
+.shot iframe{width:182%;height:527px;transform:scale(.55);transform-origin:0 0;border:0;pointer-events:none}
+.shot figcaption{font-size:11.5px;color:var(--text-3);padding:8px 13px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;background:var(--muted)}
+.shot figcaption a{color:var(--accent);text-decoration:none;white-space:nowrap}
+
+/* program ribbon — the four docs read as one program */
+.ribbon{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border:1px solid var(--border);background:var(--muted);border-radius:999px;padding:7px 16px;margin-bottom:22px;font-size:11.5px}
+.ribbon .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--text-3)}
+.ribbon a{color:var(--text-2);text-decoration:none}
+.ribbon a:hover{color:var(--accent)}
+.ribbon a.cur{color:var(--primary);font-weight:700}
+.ribbon i{color:var(--border-2);font-style:normal}
+</style>
+</head>
+<body>
+<div class="doc">
+<div class="ribbon"><span class="k">AI LABS PRODUCT PROGRAM · AUG 2026</span> <a href="live-audit-16aug.html">Live audit</a> <i>·</i> <a href="browseruse-capability-prd.html">Browser-Use PRD</a> <i>·</i> <a href="templates-marketplace-prd.html">Templates PRD</a> <i>·</i> <a href="roadmap-onepagers.html" class="cur">Roadmap one-pagers</a> <i>·</i> <a href="marketplace-prototype.html">Prototypes ↗</a></div>
+  <div class="eyebrow">AI Labs · Roadmap one-pagers</div>
+  <h1>Seven capabilities I want on the roadmap</h1>
+  <p class="lead">Short notes, one page each, on what we build next and why. None of these are moonshots — every one of them sits on rails we already have. The point of writing them down is so the team can pick one up and start without another meeting.</p>
+  <div class="meta">
+    <span><b>Author</b> Anuj Saxena</span>
+    <span><b>Date</b> 16 Aug 2026</span>
+    <span><b>Status</b> Direction notes — each graduates to a full PRD when picked up</span>
+  </div>
+  <div class="toc">
+    <a href="#artifacts">1 · Artifact generation</a>
+    <a href="#connectors">2 · Gmail / Slack / Drive connectors</a>
+    <a href="#feedback">3 · Thumbs up / down</a>
+    <a href="#widgets">4 · New widgets</a>
+    <a href="#whatsapp">5 · WhatsApp integration</a>
+    <a href="#intelligence">6 · Generic Intelligence API</a>
+    <a href="#chat">7 · Chat</a>
+  </div>
+
+  <!-- 1 ─────────────────────────────────────────── -->
+  <div class="pager" id="artifacts">
+    <div class="num">ONE-PAGER · 01</div>
+    <h2>Artifact generation — agents that hand you a finished document</h2>
+    <p class="oneliner">Our agents can read documents and talk about them. I want them to hand you one back.</p>
+
+    <h3>Why I want this</h3>
+    <p>Look at what our customers actually do after talking to an agent today: they take the answer and go make a document out of it somewhere else. Offer letters, payroll summaries, shift rosters, training certificates, JD posts, weekly MIS. That last step is ours to take. An AI employee that ends every task with "here's the file" feels finished. One that ends with a paragraph of text feels like a chatbot.</p>
+    <p>This also compounds everything else on this list — artifacts are what you send over Gmail, drop into Drive, and deliver on WhatsApp.</p>
+
+    <h3>How it works on our platform</h3>
+    <ul>
+      <li>A new step capability: <b>generate artifact</b> — LLM step output flows into an org-branded template (DOCX/PDF/XLSX to start), renders server-side, lands in S3.</li>
+      <li>Delivery through what we already have: the <code>download</code> widget in chat, a WhatsApp document message, or a WRITE step into the org's systems.</li>
+      <li>Templates live at org level like tools do — create once, any agent uses them. Marketplace templates ship with their own (Mia ships an offer-letter and crew-ID template out of the box).</li>
+      <li>Every artifact carries provenance: which run, which step, which data. If we generate a payslip summary, I want to trace every number in it.</li>
+    </ul>
+    <div class="row"><span class="chip have">HAVE: download widget</span><span class="chip have">HAVE: S3 + session media</span><span class="chip have">HAVE: run provenance</span><span class="chip build">BUILD: template renderer</span><span class="chip build">BUILD: artifact step config</span></div>
+    <div class="ship"><b>Ship first:</b> offer letter + completion certificate for Mia, payroll summary sheet for the payroll agents. Measure: % of runs that end in a downloaded/delivered file. If nobody downloads, we built the wrong templates.</div>
+  </div>
+
+  <!-- 2 ─────────────────────────────────────────── -->
+  <div class="pager" id="connectors">
+    <div class="num">ONE-PAGER · 02</div>
+    <h2>Gmail, Slack, Drive connectors — meet work where it already lives</h2>
+    <p class="oneliner">Every enterprise we sell to runs on Google Workspace and Slack. Our agents should treat those as home turf, not integrations.</p>
+
+    <h3>Why I want this</h3>
+    <p>Right now, when Mia finishes onboarding someone, a human copies the result into an email. When a check fails, a human tells the ops channel. That's us doing 95% of the work and leaving the visible 5% to manual effort — so the customer remembers the manual part. The connectors are small builds with outsized perceived value: they're where the agent's work becomes visible to the rest of the company.</p>
+
+    <h3>How it works on our platform</h3>
+    <ul>
+      <li>Ship all three as <b>first-party MCP servers</b> in the MCP Registry — same rails as everything else, nothing bespoke. Gmail: send/draft with org templates. Slack: post to channel, DM summaries, escalation pings. Drive: read a folder into the Knowledge Base (with resync), write artifacts back.</li>
+      <li>Org admin connects once with a scoped service account — never a personal login. Agents get the capability through the normal tool picker; steps get it through step-level attachment.</li>
+      <li>These become <b>platform-ready capabilities in the marketplace install wizard</b> — the "Ready ✓ · platform" row. Install Mia, tick Gmail, offer letters go out on their own.</li>
+      <li>Drive-to-KB sync quietly fixes our biggest KB complaint: stale documents. The org's policy folder IS the knowledge base.</li>
+    </ul>
+    <div class="row"><span class="chip have">HAVE: MCP registry + attachment</span><span class="chip have">HAVE: encrypted secrets, WRITE outbox</span><span class="chip have">HAVE: KB ingestion pipeline</span><span class="chip build">BUILD: 3 connector servers + OAuth admin flow</span></div>
+    <div class="ship"><b>Ship first:</b> Slack escalations (smallest, most visible — every WAITING_FOR_HUMAN pings the ops channel), then Drive→KB sync, then Gmail send. Measure: % of installs that connect at least one; time from exception to human response.</div>
+  </div>
+
+  <!-- 3 ─────────────────────────────────────────── -->
+  <div class="pager" id="feedback">
+    <div class="num">ONE-PAGER · 03</div>
+    <h2>Thumbs up / thumbs down — the cheapest trust signal we're not collecting</h2>
+    <p class="oneliner">We already built the feedback backend. There's just no thumb to press.</p>
+
+    <h3>Why I want this</h3>
+    <p>My number one roadmap bet is the trust layer — an enterprise hires AI employees when it can review them like human ones. Reviews need signal, and the cheapest, highest-volume signal in the industry is a thumb on every response. We have a feedback module with seven endpoints sitting in ghost_operators and almost nothing feeding it. That's a finished kitchen with no waiters.</p>
+    <p>One rule, though: a thumbs-down must go somewhere. Feedback that disappears into a table trains users to stop giving it.</p>
+
+    <h3>How it works on our platform</h3>
+    <ul>
+      <li>👍👎 on every agent response in the chat UI (agent-ui renderer, embed included), with an optional one-tap reason on thumbs-down: wrong answer / didn't understand / too slow / other.</li>
+      <li>Signals land against the run + step (the feedback module already models this), so a bad rating points at the exact step and prompt that produced it.</li>
+      <li>Surface it in three places: the <b>Analytics quality tab</b> (rating per agent, trending), the <b>Run inspector</b> (rated turns flagged inline), and the <b>marketplace listing</b> (outcome + satisfaction, not star vanity).</li>
+      <li>Close the loop: thumbs-down clusters become the eval set for the next prompt/template version. This is how templates get better between versions without guessing.</li>
+    </ul>
+    <div class="row"><span class="chip have">HAVE: feedback module (7 endpoints)</span><span class="chip have">HAVE: analytics quality tab</span><span class="chip have">HAVE: run/step tracing</span><span class="chip build">BUILD: chat widget + aggregation views</span></div>
+    <div class="ship"><b>Ship first:</b> the thumb in agent-ui + a rating column in analytics. Two weeks of work, mostly frontend. Measure: feedback rate per 100 responses (target 5%+), and whether thumbs-down rate drops release over release — that's the trust layer becoming real.</div>
+  </div>
+
+  <!-- 4 ─────────────────────────────────────────── -->
+  <div class="pager" id="widgets">
+    <div class="num">ONE-PAGER · 04</div>
+    <h2>New widgets — the vocabulary of our conversations</h2>
+    <p class="oneliner">Widgets are why our agents feel like products instead of chatbots. Sixteen types got us here; the roster needs about six more.</p>
+
+    <h3>Why I want this</h3>
+    <p>Every good moment in our demos is a widget: the job card, the camera capture, the MCQ. Text is what agents fall back to when we haven't built the right widget yet. I look at the roster and the templates we want to sell, and the gaps are obvious — each missing widget is a template we can't ship or a flow that degrades into typing.</p>
+
+    <h3>What to build, in order</h3>
+    <ul>
+      <li><b>reel_player</b> — Skilling reels with the MCQ frame, inside chat. Makes Theo real and completes the training step of every onboarding template. Biggest single win, and the LMS content already exists.</li>
+      <li><b>signature</b> — draw-to-sign for offer acceptance and consent. Pairs with artifact generation (sign the generated letter without leaving chat).</li>
+      <li><b>calendar_slots</b> — pick an interview/visit slot. Jack books interviews today through prose; that's silly.</li>
+      <li><b>payment_upi</b> — collect a fee or deposit in-flow (gig onboarding, training fees). Needs the payments team, so start the conversation now.</li>
+      <li><b>data_table</b> — structured rows with sort/confirm, for payroll normalizers and MIS agents that currently dump JSON into text.</li>
+      <li><b>voice_note</b> — record-and-send for candidates who won't type. This is India frontline; voice is not a nice-to-have.</li>
+    </ul>
+    <p>Standard applies to all six: registered in widget_registry with a schema, <code>dataTemplate</code> + <code>outputKeyMap</code> like every existing widget, graceful text fallback, works in embed. Nothing ships as a one-off renderer.</p>
+    <div class="row"><span class="chip have">HAVE: widget_registry + 16 types</span><span class="chip have">HAVE: builder mapping UX</span><span class="chip have">HAVE: reels + MCQ content (Skilling)</span><span class="chip build">BUILD: 6 renderers + schemas</span></div>
+    <div class="ship"><b>Ship first:</b> reel_player — it's already on the capability-map build list and blocks the Mia template. Measure per widget: usage per 100 runs and step-completion rate vs the text fallback. A widget that doesn't beat text gets cut.</div>
+  </div>
+
+  <!-- 5 ─────────────────────────────────────────── -->
+  <div class="pager" id="whatsapp">
+    <div class="num">ONE-PAGER · 05</div>
+    <h2>WhatsApp integration — the channel our users already open 40 times a day</h2>
+    <p class="oneliner">For frontline India and SEA, WhatsApp isn't a channel. It's THE channel. Everything else is where we make them come to us.</p>
+
+    <h3>Why I want this</h3>
+    <p>The research keeps saying the same thing: 60–80% response rates on WhatsApp against ~30% for calls, 85% completion for chat-delivered training against 20–30% for LMS logins, and the biggest drop-offs in every funnel are exactly where we force a candidate to switch surfaces. We built beautiful chat experiences and then asked users to find them. WhatsApp inverts that — the agent shows up where the person already is. This is the single highest-leverage distribution decision on the roadmap.</p>
+
+    <h3>How it works on our platform</h3>
+    <ul>
+      <li>BSP integration (Meta Cloud API or a partner — decide on rate cards) living beside Plivo in <code>channel_open</code>. One more edge; ghost_operators doesn't change.</li>
+      <li><b>Sessions key to the phone number</b> — a candidate can drop off Tuesday and resume Thursday with context intact. This is principle #4 from the onboarding research; WhatsApp makes it native.</li>
+      <li>Widgets degrade gracefully: quick replies → WhatsApp buttons, cards → media messages, forms → guided Q&A, artifacts → document messages. The widget schema already separates content from rendering, so this is a renderer target, not a rebuild.</li>
+      <li>Templates and opt-ins managed at org level; STOP handling wired to the consent lifecycle we defined for the talent pool. Compliance is part of the channel, not an afterthought.</li>
+      <li>In the marketplace install wizard, WhatsApp is just a channel checkbox — install Mia, tick WhatsApp, she's on the org's number.</li>
+    </ul>
+    <figure class="shot"><div class="frame"><iframe src="subway-crew-onboarding.html" title="preview" loading="lazy" tabindex="-1"></iframe></div><figcaption><span>The experience WhatsApp carries: Mia-class onboarding chat with widgets — this whole flow rides the org's WhatsApp number instead of a web link.</span><a href="subway-crew-onboarding.html">open the real thing ↗</a></figcaption></figure>
+    <div class="row"><span class="chip have">HAVE: channel_open (Plivo voice)</span><span class="chip have">HAVE: widget schemas, session state</span><span class="chip have">HAVE: consent lifecycle design</span><span class="chip build">BUILD: BSP integration + renderer + template mgmt</span></div>
+    <div class="ship"><b>Ship first:</b> Mia's onboarding flow end-to-end on WhatsApp for one pilot org. Measure: completion rate vs web embed on the same template — the research says it should roughly double. If it does, every template gets the checkbox.</div>
+  </div>
+
+  <!-- 6 ─────────────────────────────────────────── -->
+  <div class="pager" id="intelligence">
+    <div class="num">ONE-PAGER · 06</div>
+    <h2>Generic Intelligence API — one paved road for every BetterPlace product</h2>
+    <p class="oneliner">Every internal team is about to wire up their own LLM key. I'd rather they all call us.</p>
+
+    <h3>Why I want this</h3>
+    <p>skillBetter wants summaries. Verify wants document extraction. Payroll wants anomaly explanations. ESS wants a Q&A box. Left alone, each team ships its own OpenAI integration with its own key, no guardrails, no cost visibility, and five different answers to "is this compliant?". We already run the hard parts — multi-provider routing, guardrails, credits metering, telemetry, private-cloud inference. Exposing that as one internal API makes AI Labs the intelligence layer for the whole company, not just the agent studio. And every internal consumer makes our platform better priced and better tested for external customers.</p>
+
+    <h3>How it works on our platform</h3>
+    <ul>
+      <li>One internal API, three verbs to start: <b>complete</b> (prompt in, structured output out), <b>extract</b> (document in, schema out — reusing the OCR/IDP stack), <b>converse</b> (a headless agent session for products that want chat without building it).</li>
+      <li>Every call carries a product key → per-product <b>credits, rate limits, guardrails, and telemetry</b> out of the box. Finance sees AI spend per product in one place. That alone justifies the build.</li>
+      <li>Model routing stays ours: self-hosted for sensitive payloads, commercial models where quality demands — callers say what they need (fast/cheap/best), not which model. We keep the freedom to swap providers without ten teams changing code.</li>
+      <li>Data residency inherits automatically — "your data never leaves BetterPlace infrastructure" becomes true for every product, not just AI Labs.</li>
+      <li>This is ghost_operators' <code>/invoke</code> + the model resolver with a product-facing front door and quotas. Kong already sits in front. The build is mostly contract, keys, and quota plumbing.</li>
+    </ul>
+    <div class="row"><span class="chip have">HAVE: multi-provider resolver</span><span class="chip have">HAVE: credits, guardrails, telemetry</span><span class="chip have">HAVE: Kong gateway</span><span class="chip build">BUILD: product keys, quotas, 3-verb contract, docs</span></div>
+    <div class="ship"><b>Ship first:</b> <code>extract</code> for Verify (they're already asking) with per-product credit reporting. Measure: number of internal products on the API, spend visibility coverage, and how many bespoke LLM keys we retire. Success is boring: nobody at BetterPlace wires a raw LLM key again.</div>
+  </div>
+
+  <!-- 7 ─────────────────────────────────────────── -->
+  <div class="pager" id="chat">
+    <div class="num">ONE-PAGER · 07</div>
+    <h2>Chat — a Claude-style workspace inside the console</h2>
+    <p class="oneliner">We run the most capable models in the region and give our own users no way to just talk to them. Fix that.</p>
+
+    <h3>Why I want this</h3>
+    <p>Agents are periodic — you onboard someone, you fill a req. Chat is daily. Every admin, HR lead, and ops person in the console should be able to hit <b>New chat</b> and work with the best model directly: draft the policy note, analyze the attendance dump, ask questions against their own knowledge base, and walk away with a finished file. This is what makes AI Labs a habit instead of a tool you visit.</p>
+    <p>And it's not ChatGPT-with-extra-steps. The whole point is what's already plugged in: the org's knowledge, the org's connectors, our artifact generation, our guardrails, our private cloud. ChatGPT knows nothing about your company; this chat starts there. It's also our best agent-creation funnel — a chat someone repeats every Monday IS an agent waiting to be configured, so the "turn this into an agent" button belongs right in the thread.</p>
+
+    <h3>How it works on our platform</h3>
+    <ul>
+      <li>A <b>Chat</b> item in the console sidebar: new chat, history, search. Sessions and history ride the <code>chat_history</code> module we already run.</li>
+      <li>Defaults to the <b>most capable model</b> via the resolver — users never pick a model, they pick a job. Same engine the Generic Intelligence API (one-pager 06) exposes to products; Chat is the human door, the API is the product door.</li>
+      <li><b>Attach the org's world per chat:</b> knowledge base collections, connected tools and MCP servers (Drive, Slack, Gmail from one-pager 02), uploaded files. Everything scoped to the tenant, nothing leaves our infrastructure.</li>
+      <li><b>Artifacts in the thread</b> (one-pager 01): ask for the report, get the DOCX/XLSX with a download card — same renderer, same provenance.</li>
+      <li>Same governance as everything else, for free: guardrails on every response, credits metering per seat, thumbs up/down (one-pager 03), full audit trail. IT gets one answer to "who's using AI on what".</li>
+      <li><b>"Turn this into an agent"</b> — one click hands the conversation pattern to the NL builder as a draft. Chat becomes the top of the agent-creation funnel.</li>
+    </ul>
+    <div class="row"><span class="chip have">HAVE: chat_history module</span><span class="chip have">HAVE: model resolver, guardrails, credits</span><span class="chip have">HAVE: KB + MCP attachment rails</span><span class="chip have">HAVE: NL builder</span><span class="chip build">BUILD: chat surface + file upload + agent-handoff</span></div>
+    <div class="ship"><b>Ship first:</b> New chat + history + best model + KB attach + artifact download, in the console sidebar. Measure: weekly active chatters per org, % of chats that touch org knowledge or tools (if it stays near zero we built a generic chatbot, not ours), and chats converted to agents per month.</div>
+  </div>
+
+  <footer>
+    Direction notes by Anuj · each becomes a full PRD + prototype when picked up (same treatment as browser-use and templates) · context: context-pack/02-PRODUCT-DIRECTION.md · companions: browseruse-capability-prd.html · templates-marketplace-prd.html
+  </footer>
+</div>
+</body>
+</html>

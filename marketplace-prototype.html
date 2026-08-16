@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Employee Marketplace — AI Labs Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══ AI Labs PRODUCT design language (marketplace lives in-product) ═══
+   Light admin UI: mfe tokens — primary #1B2D93, accent #0953E5, bg #f5f6fa.
+   (Website/deck artifacts stay deck-dark; this is the in-app surface.) */
+:root{
+  --primary:#1B2D93; --primary-text:#1B2D93; --accent:#0953E5;
+  --primary-light:#e3ecff; --primary-lighter:#f1f4ff;
+  --async:#7c3aed; --async-light:#ede9fe;
+  --ok:#16a34a; --ok-light:#dcfce7; --warn:#d97706; --warn-light:#fef3c7;
+  --err:#dc2626; --err-light:#fee2e2;
+  --bg:#f5f6fa; --surface:#ffffff; --muted:#f9fafb;
+  --border:#e1e4e8; --border-2:#d1d5db;
+  --text:#1a1a2e; --text-2:#6b7280; --text-3:#9ca3af;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --disp:var(--sans);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:10px; --r-lg:14px; --r-pill:999px;
+  --shadow:0 1px 2px rgba(26,26,46,.05),0 6px 20px -8px rgba(26,26,46,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── app shell: dark sidebar + light content (mirrors ailabs prod) ── */
+.shell{display:flex;flex-direction:column;min-height:100dvh}
+.side{background:#1a1a2e;color:#e5e7f0;padding:12px 14px;display:flex;align-items:center;gap:10px;overflow-x:auto}
+.side .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14px;color:#fff;flex:none}
+.side .brand .lg{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#6d28d9,#8b5cf6);display:grid;place-items:center;font-size:13px}
+.side .brand small{display:block;font-weight:400;font-size:10px;opacity:.6}
+.nav{display:flex;gap:2px;align-items:center}
+.nav a{color:#e5e7f0;opacity:.72;text-decoration:none;font-size:12.5px;padding:6px 10px;border-radius:7px;white-space:nowrap;display:flex;align-items:center;gap:9px}
+.nav a svg{width:15px;height:15px;flex:none;opacity:.85}
+.nav a.on{background:rgba(255,255,255,.1);opacity:1;font-weight:600}
+.nav a .new{font-size:8.5px;font-family:var(--mono);background:var(--accent);color:#fff;border-radius:999px;padding:1px 6px;letter-spacing:.06em}
+.nav .sec{display:none}
+.sidefoot{margin-left:auto;flex:none;display:flex;align-items:center;gap:10px;font-size:11px}
+.sidefoot .credits{font-weight:700}
+.sidefoot .credits small{font-weight:400;opacity:.6;margin-left:5px}
+.sidefoot .user{display:flex;align-items:center;gap:6px;opacity:.85}
+.sidefoot .user i{width:18px;height:18px;border-radius:50%;background:#3a4152;display:grid;place-items:center;font-style:normal;font-size:9px}
+@media(min-width:980px){
+  .shell{flex-direction:row}
+  .side{flex-direction:column;align-items:stretch;width:232px;flex:none;padding:18px 14px;position:sticky;top:0;height:100dvh;overflow-y:auto}
+  .side .brand{font-size:15px;margin-bottom:16px}
+  .nav{flex-direction:column;align-items:stretch}
+  .nav a{padding:8px 11px;font-size:13px}
+  .nav .sec{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;opacity:.45;margin:13px 4px 4px}
+  .sidefoot{margin:auto 0 0;flex-direction:column;align-items:stretch;gap:8px;border-top:1px solid rgba(255,255,255,.12);padding-top:12px}
+}
+.content{flex:1;min-width:0}
+.crumbbar{background:var(--surface);border-bottom:1px solid var(--border);padding:9px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.crumbbar .crumb{font-size:12px;color:var(--text-3)}
+.crumbbar .crumb b{color:var(--text)}
+.crumbbar .links{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.crumbbar .links a{color:var(--accent);font-size:11px;text-decoration:none;border:1px solid var(--border-2);border-radius:var(--r-pill);padding:4px 11px}
+.main{max-width:1080px;margin:0 auto;padding:26px 18px 90px}
+.view{display:none}.view.on{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1}}
+.eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px;font-weight:600}
+h1{font-family:var(--disp);font-size:clamp(21px,3.4vw,27px);font-weight:750;letter-spacing:-.015em;margin:0 0 6px;text-wrap:balance}
+.sub{color:var(--text-2);font-size:13.5px;margin:0 0 20px;max-width:74ch}
+.badge{display:inline-block;font-size:10px;font-weight:650;border-radius:var(--r-pill);padding:2px 9px}
+.badge.off{background:var(--primary-light);color:var(--primary)}
+.badge.ok{background:var(--ok-light);color:var(--ok)}
+.badge.warn{background:var(--warn-light);color:var(--warn)}
+.badge.teal{background:var(--async-light);color:var(--async)}
+.badge.y{background:var(--primary-light);color:var(--primary);border:1px solid var(--primary)}
+.badge.soon{background:var(--muted);color:var(--text-3);border:1px solid var(--border)}
+.mono{font-family:var(--mono);font-size:.9em}
+.btn{border-radius:var(--r-pill);border:1px solid var(--border-2);background:var(--surface);padding:10px 18px;font-size:13px;font-weight:600;color:var(--text)}
+.btn.pri{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:650}
+.btn:disabled{opacity:.45;cursor:default}
+.back{font-family:var(--mono);font-size:11.5px;color:var(--accent);background:none;border:none;padding:0;margin-bottom:14px}
+
+/* storefront */
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}
+.filters button{border:1px solid var(--border-2);background:var(--surface);border-radius:var(--r-pill);padding:5px 13px;font-size:12px;color:var(--text-2)}
+.filters button.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:650}
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:17px 18px;display:flex;flex-direction:column;gap:8px}
+.tcard .head{display:flex;gap:11px;align-items:center}
+.tcard .av{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:17px;font-weight:700;flex:none}
+.tcard h3{font-family:var(--disp);font-size:15.5px;margin:0;font-weight:700}
+.tcard .role{font-size:10.5px;color:var(--text-3);letter-spacing:.06em;font-weight:500}
+.tcard p{margin:0;font-size:12.5px;color:var(--text-2);flex:1}
+.tcard .stats{display:flex;gap:16px;font-size:10.5px;color:var(--text-3);border-top:1px solid var(--border);padding-top:10px;letter-spacing:.02em}
+.tcard .stats b{color:var(--text);font-size:12px;display:block}
+.tcard .price{color:var(--primary);font-weight:700}
+.tcard .actions{display:flex;gap:8px;margin-top:2px}
+.tcard .actions .btn{flex:1;padding:8px 0;font-size:12.5px;text-align:center}
+
+/* detail */
+.dgrid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:960px){.dgrid{grid-template-columns:1.4fr 1fr}}
+.dgrid>div{min-width:0}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:16px 19px;margin-bottom:14px}
+.panel h3{font-family:var(--disp);font-size:14.5px;margin:0 0 4px;font-weight:700;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.panel .ps{color:var(--text-2);font-size:12px;margin:0 0 12px}
+.wmap{display:flex;gap:0;overflow-x:auto;padding:4px 0 8px;align-items:center}
+.wnode{flex:none;width:118px;border:1.5px solid var(--border-2);border-radius:9px;background:var(--muted);padding:8px 10px}
+.wnode .k{font-size:8.5px;letter-spacing:.09em;color:var(--async);text-transform:uppercase;font-weight:700}
+.wnode b{font-size:11px;display:block;line-height:1.3;margin-top:2px}
+.warr{flex:none;width:26px;text-align:center;color:var(--text-3)}
+.lock{font-size:9.5px;color:var(--text-3);font-family:var(--mono)}
+.bindrow{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);border-radius:9px;padding:10px 13px;margin-bottom:7px;background:var(--muted)}
+.bindrow .ic{width:28px;height:28px;border-radius:8px;background:var(--primary-light);color:var(--primary);display:grid;place-items:center;flex:none}
+.bindrow .ic svg{width:14px;height:14px}
+.bindrow b{font-size:12.5px;display:block}
+.bindrow p{margin:1px 0 0;font-size:11px;color:var(--text-3)}
+.chatprev{background:var(--muted);border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;gap:7px}
+.cb{max-width:85%;padding:7px 11px;border-radius:11px;font-size:12px}
+.cb.bot{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px}
+.cb.user{background:var(--primary);color:#fff;justify-self:end;border-bottom-right-radius:4px}
+.verrow{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:8px 2px;border-top:1px solid var(--border)}
+.verrow span:first-child{color:var(--text-2)}
+.verrow span:last-child{font-weight:600}
+.verrow:first-child{border-top:none}
+
+/* wizard */
+.wizhead{display:flex;gap:6px;margin:4px 0 18px;overflow-x:auto}
+.wstep{flex:1;min-width:120px;border-top:3px solid var(--border);padding-top:8px;font-size:11.5px;color:var(--text-3)}
+.wstep b{display:block;font-size:12.5px;color:var(--text-2)}
+.wstep.cur{border-top-color:var(--accent)}
+.wstep.cur b{color:var(--text)}
+.wstep.done{border-top-color:var(--ok)}
+.slot{border:1px solid var(--border);border-radius:11px;padding:13px 16px;margin-bottom:10px;background:var(--muted);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.slot .ic{width:32px;height:32px;border-radius:9px;background:var(--primary-light);color:var(--primary);display:grid;place-items:center;flex:none}
+.slot .ic svg{width:16px;height:16px}
+.slot .tx{flex:1;min-width:200px}
+.slot b{font-size:13px;display:block}
+.slot p{margin:1px 0 0;font-size:11.5px;color:var(--text-3)}
+.slot .act{flex:none}
+.slot select{background:var(--surface);color:var(--text);border:1px solid var(--border-2);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit}
+.wizfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.themerow{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:34px;height:34px;border-radius:9px;border:2px solid transparent;cursor:pointer}
+.sw.on{border-color:var(--accent)}
+.langs{display:flex;gap:7px;flex-wrap:wrap}
+.langs button{border:1.5px solid var(--border-2);background:var(--surface);color:var(--text-2);border-radius:var(--r-pill);padding:5px 13px;font-size:12px}
+.langs button.on{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:650}
+.langs button:disabled{opacity:.4;cursor:not-allowed}
+
+/* preflight & activate */
+.check{display:flex;gap:10px;align-items:center;border:1px solid var(--border);border-radius:9px;padding:10px 13px;margin-bottom:7px;background:var(--surface);font-size:12.5px}
+.check .st{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;flex:none;background:var(--muted);color:var(--text-3)}
+.check.run .st{background:var(--warn-light);color:var(--warn)}
+.check.run .st::after{content:"";width:10px;height:10px;border:2px solid var(--warn);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.check.ok .st{background:var(--ok-light);color:var(--ok)}
+.check .why{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--text-3)}
+.donecard{text-align:center;padding:30px 20px}
+.donecard .big{width:64px;height:64px;margin:0 auto 12px;border-radius:50%;background:var(--ok-light);color:var(--ok);display:grid;place-items:center;font-size:28px}
+.alias{display:inline-block;font-family:var(--mono);font-size:11px;background:var(--muted);border:1px solid var(--border);border-radius:8px;padding:8px 14px;margin-top:10px;color:var(--text-2)}
+.alias b{color:var(--accent)}
+.stat3{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:16px auto 0;max-width:560px}
+.stat3 .s{background:var(--muted);border:1px solid var(--border);border-radius:10px;padding:11px}
+.stat3 .n{font-family:var(--disp);font-size:19px;font-weight:750}
+.stat3 .l{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-top:2px;font-weight:600}
+footer{margin-top:30px;color:var(--text-3);font-size:11px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="lg">A</span><span>AI Labs<small>BetterPlace</small></span></div>
+    <nav class="nav">
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Knowledge Base</a>
+      <a href="#" class="on" style="opacity:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="12" rx="2"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/><path d="M12 7V4"/></svg> Agents</a>
+      <div class="sec">Registry</div>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Dashboard</a>
+      <a href="#" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Marketplace <span class="new">NEW</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Runs</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3"/><path d="M6 7h12v5a6 6 0 0 1-12 0z"/><path d="M12 18v3"/></svg> Integrations</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg> Webhooks</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg> MCP Registry</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg> Guardrail Events</a>
+      <div class="sec">Credits</div>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9h-9z"/></svg> Limits</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg> Logs</a>
+      <div class="sec">Settings</div>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Policy &amp; Guardrails</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-5-6.3"/></svg> User Management</a>
+    </nav>
+    <div class="sidefoot">
+      <span class="credits">9,047.311 <small>credits available</small></span>
+      <span class="user"><i>A</i> anuj.saxena@bett…</span>
+    </div>
+  </aside>
+  <div class="content">
+    <div class="crumbbar">
+      <span class="crumb">Agents / Registry / <b>Marketplace</b></span>
+      <div class="links">
+        <a href="templates-marketplace-prd.html">Templates PRD ↗</a>
+        <a href="subway-crew-onboarding.html">What candidates see ↗</a>
+      </div>
+    </div>
+<div class="main">
+
+  <!-- ═══ VIEW 1 · STOREFRONT ═══ -->
+  <section class="view on" id="v-store">
+    <h1>Marketplace</h1>
+    <p class="sub">Hire certified AI employees for your team. Install one by binding your knowledge, tools, and brand — the workflow stays certified and maintained. Runs on the same platform as everything else: guardrails, audit trails, credits.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px">
+      <div class="panel" style="margin:0;padding:13px 16px"><div class="eyebrow" style="margin:0 0 2px">Templates</div><div style="font-size:22px;font-weight:750">6</div></div>
+      <div class="panel" style="margin:0;padding:13px 16px"><div class="eyebrow" style="margin:0 0 2px">Installed by you</div><div style="font-size:22px;font-weight:750">0</div></div>
+      <div class="panel" style="margin:0;padding:13px 16px"><div class="eyebrow" style="margin:0 0 2px">Certifying</div><div style="font-size:22px;font-weight:750">1</div></div>
+      <div class="panel" style="margin:0;padding:13px 16px"><div class="eyebrow" style="margin:0 0 2px">Median install</div><div style="font-size:22px;font-weight:750">41 min</div></div>
+    </div>
+    <div class="filters">
+      <button class="on">All</button><button>QSR &amp; Retail</button><button>Logistics</button><button>BFSI</button><button>Hire</button><button>Onboard</button><button>Verify</button><button>Train</button>
+    </div>
+    <div class="grid">
+      <div class="tcard">
+        <div class="head"><div class="av" style="background:#e3ecff;color:#1B2D93">M</div><div><h3>AI Mia <span class="badge off">Official</span></h3><div class="role">ONBOARDING SPECIALIST · QSR EDITION</div></div></div>
+        <p>Takes a signed offer to a verified, trained, Day-1-ready crew member. Documents, ID verification, BGV dispatch, training reels — in one chat.</p>
+        <div class="stats"><span><b>34</b> installs</span><span><b>87%</b> completion</span><span><b>41 min</b> median install</span><span class="price"><b>₹18</b>/onboarded</span></div>
+        <div class="actions"><button class="btn" onclick="go('v-detail')">Preview</button><button class="btn pri" onclick="go('v-wiz1')">Install</button></div>
+      </div>
+      <div class="tcard">
+        <div class="head"><div class="av" style="background:#dcfce7;color:#15803d">J</div><div><h3>AI Jack <span class="badge off">Official</span></h3><div class="role">TALENT SPECIALIST · FRONTLINE</div></div></div>
+        <p>Fills reqs: rediscovers your talent pool, sources where no API exists, screens on WhatsApp, books interviews, hands accepted offers to Mia.</p>
+        <div class="stats"><span><b>21</b> installs</span><span><b>2.1 d</b> median req→accept</span><span class="price"><b>₹35</b>/qualified candidate</span></div>
+        <div class="actions"><button class="btn">Preview</button><button class="btn pri">Install</button></div>
+      </div>
+      <div class="tcard">
+        <div class="head"><div class="av" style="background:#fef3c7;color:#b45309">C</div><div><h3>AI Cole <span class="badge soon">Certifying</span></h3><div class="role">VERIFICATION SPECIALIST</div></div></div>
+        <p>Collects documents, OCR-verifies against registries, runs court checks with human adjudication on ambers.</p>
+        <div class="stats"><span><b>—</b> installs</span><span><b>cert</b> stage 2/3</span><span class="price"><b>₹9</b>/verified doc</span></div>
+        <div class="actions"><button class="btn" disabled>Preview</button><button class="btn" disabled>Notify me</button></div>
+      </div>
+      <div class="tcard">
+        <div class="head"><div class="av" style="background:#ede9fe;color:#6d28d9">T</div><div><h3>AI Theo <span class="badge off">Official</span></h3><div class="role">LEARNING SPECIALIST</div></div></div>
+        <p>Turns your SOPs into reels-with-quizzes, teaches in chat, certifies workers, and reports readiness to ops.</p>
+        <div class="stats"><span><b>17</b> installs</span><span><b>85%</b> completion</span><span class="price"><b>₹4</b>/certification</span></div>
+        <div class="actions"><button class="btn">Preview</button><button class="btn pri">Install</button></div>
+      </div>
+      <div class="tcard">
+        <div class="head"><div class="av" style="background:#fce7f3;color:#be185d">I</div><div><h3>AI Ivy <span class="badge off">Official</span></h3><div class="role">INTERVIEW SPECIALIST</div></div></div>
+        <p>Structured first-round interviews — chat or voice — scored on your rubric, with an explainable trace per candidate.</p>
+        <div class="stats"><span><b>12</b> installs</span><span><b>75%</b> completion</span><span class="price"><b>₹22</b>/interview</span></div>
+        <div class="actions"><button class="btn">Preview</button><button class="btn pri">Install</button></div>
+      </div>
+      <div class="tcard">
+        <div class="head"><div class="av" style="background:#f0f1f5;color:#4a5260">P</div><div><h3>Partner templates <span class="badge teal">Phase 3</span></h3><div class="role">BUILT BY CERTIFIED PARTNERS</div></div></div>
+        <p>Staffing agencies and SIs publish their own certified employees to the same shelf — same certification gate, revenue share on outcomes.</p>
+        <div class="stats"><span><b>Same cert</b> as Official</span><span><b>Rev share</b> on outcomes</span></div>
+        <div class="actions"><button class="btn" disabled>Coming later</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ VIEW 2 · TEMPLATE DETAIL ═══ -->
+  <section class="view" id="v-detail">
+    <button class="back" onclick="go('v-store')">← Back to marketplace</button>
+    <div class="eyebrow">Marketplace / Template · Official · v2.3</div>
+    <h1>AI Mia — Onboarding Specialist (QSR edition)</h1>
+    <p class="sub">Offer-accepted → Day-1-ready. Mia collects details with consent, verifies identity, dispatches background checks that never block the candidate, runs training reels in chat, and hands a verified crew ID to your HRMS.</p>
+    <div class="dgrid">
+      <div>
+        <div class="panel">
+          <h3>What Mia does <span class="badge y">fixed · certified</span> <span class="lock">🔒 upgrades maintained by BetterPlace</span></h3>
+          <p class="ps">The workflow map is the certified behavior — identical across every org that hires Mia.</p>
+          <div class="wmap">
+            <div class="wnode"><span class="k">consent</span><b>Consent gate</b></div><span class="warr">→</span>
+            <div class="wnode"><span class="k">capture</span><b>Confirm details</b></div><span class="warr">→</span>
+            <div class="wnode"><span class="k">capture</span><b>ID + OCR confirm</b></div><span class="warr">→</span>
+            <div class="wnode"><span class="k">tool</span><b>Liveness match</b></div><span class="warr">→</span>
+            <div class="wnode"><span class="k">dispatch</span><b>BGV pipeline (async)</b></div><span class="warr">→</span>
+            <div class="wnode"><span class="k">llm</span><b>Screening Qs</b></div><span class="warr">→</span>
+            <div class="wnode"><span class="k">widget</span><b>Training reel + quiz</b></div><span class="warr">→</span>
+            <div class="wnode"><span class="k">write</span><b>Crew ID → HRMS</b></div>
+          </div>
+          <p class="ps" style="margin-top:8px">Guardrail floor (cannot be loosened): PII masking · consent events logged · ID numbers masked to last-4 · biometric opt-in separate · 90-day purge on unconsented data.</p>
+        </div>
+        <div class="panel">
+          <h3>What you'll configure <span class="badge ok">4 bindings · ~45 min</span></h3>
+          <div class="bindrow"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div><b>Knowledge · 2 slots</b><p>HR policy pack · store SOPs — attach your documents, Mia answers from them</p></div></div>
+          <div class="bindrow"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3"/><path d="M6 7h12v5a6 6 0 0 1-12 0z"/><path d="M12 18v3"/></svg></div><div><b>Connections · 3 capabilities</b><p>WhatsApp send (platform ✓) · OCR verify (platform ✓) · HRMS write (connect yours)</p></div></div>
+          <div class="bindrow"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="16" cy="10" r="1.2"/><path d="M12 21a2.5 2.5 0 0 0 0-5h-1a1.5 1.5 0 0 1 0-3"/></svg></div><div><b>Brand &amp; channels</b><p>Theme, avatar, languages (certified: EN · BM · 中文 · हिंदी · ID), web/WhatsApp/voice</p></div></div>
+          <div class="bindrow"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></div><div><b>People &amp; budget</b><p>HITL approver for exceptions · escalation inbox · monthly credit cap</p></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3>Sample conversation</h3>
+          <div class="chatprev">
+            <div class="cb bot">👋 Hi Aisyah! Congrats on joining <b>Subway Suria KLCC</b>. I'll get you Day-1 ready — about 10 minutes.</div>
+            <div class="cb bot">Before I collect anything, here's exactly what I'll ask for and why…</div>
+            <div class="cb user">I agree — start</div>
+            <div class="cb bot">First, check these details — don't retype them.</div>
+          </div>
+          <p class="ps" style="margin-top:8px">Full candidate demo: <a href="subway-crew-onboarding.html" style="color:var(--accent)">subway-crew-onboarding.html</a></p>
+        </div>
+        <div class="panel">
+          <h3>Signals</h3>
+          <div class="verrow"><span>Installs (live)</span><span>34 orgs</span></div>
+          <div class="verrow"><span>Candidate completion</span><span>87% median</span></div>
+          <div class="verrow"><span>Median install→activate</span><span>41 min</span></div>
+          <div class="verrow"><span>Pricing</span><span style="color:var(--accent)">₹18 / onboarded worker + credits</span></div>
+          <div class="verrow"><span>Certified</span><span>12 Aug 2026 · stage 3/3</span></div>
+          <div class="verrow"><span>Versions</span><span>v2.3 (installed: your alias picks)</span></div>
+        </div>
+        <button class="btn pri" style="width:100%;padding:13px" onclick="go('v-wiz1')">Hire Mia — start install →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ VIEW 3 · WIZARD STEP 1: KNOWLEDGE ═══ -->
+  <section class="view" id="v-wiz1">
+    <button class="back" onclick="go('v-detail')">← Mia · template</button>
+    <div class="eyebrow">Marketplace / Install · Subway MY</div>
+    <h1>Install AI Mia</h1>
+    <p class="sub">Four steps: what she reads, what she can use, how she looks, who she reports to. Nothing else — the workflow is certified and maintained for you.</p>
+    <div class="wizhead">
+      <div class="wstep cur"><b>1 · Knowledge</b>what Mia reads</div>
+      <div class="wstep"><b>2 · Connections</b>what Mia can use</div>
+      <div class="wstep"><b>3 · Brand</b>how Mia looks &amp; speaks</div>
+      <div class="wstep"><b>4 · People</b>who Mia reports to</div>
+    </div>
+    <div class="panel">
+      <h3>Document slots <span class="badge warn">2 required</span></h3>
+      <p class="ps">Mia only answers from what you attach. Documents index in the background while you finish the wizard.</p>
+      <div class="slot"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div class="tx"><b>HR policy pack</b><p>Leave, conduct, pay questions during onboarding</p></div><div class="act"><select id="slot1" onchange="slotPick()"><option value="">Choose from Knowledge Base…</option><option>Subway MY — Crew Handbook v4 (32 docs)</option><option>Upload new…</option></select></div></div>
+      <div class="slot"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15h16l-1.5 5h-13z"/><path d="M4 15a8 8 0 0 1 16 0"/></svg></div><div class="tx"><b>Store SOPs</b><p>Food safety &amp; ops content that powers training reels</p></div><div class="act"><select id="slot2" onchange="slotPick()"><option value="">Choose from Knowledge Base…</option><option>Subway MY — Food Safety SOP 2026 (11 docs)</option><option>Upload new…</option></select></div></div>
+      <div class="slot" style="opacity:.75"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></div><div class="tx"><b>Optional: local store notes</b><p>Store-specific quirks — parking, uniforms, lockers</p></div><div class="act"><select><option>Skip for now</option></select></div></div>
+    </div>
+    <div class="wizfoot"><button class="btn" onclick="go('v-store')">Cancel</button><button class="btn pri" id="w1next" disabled onclick="go('v-wiz2')">Next: Connections →</button></div>
+  </section>
+
+  <!-- ═══ VIEW 4 · WIZARD STEP 2: CONNECTIONS ═══ -->
+  <section class="view" id="v-wiz2">
+    <button class="back" onclick="go('v-wiz1')">← Knowledge</button>
+    <div class="eyebrow">Install · Subway MY</div>
+    <h1>Connections</h1>
+    <p class="sub">Mia declares the capabilities she needs; you point each at your org's tools. Platform capabilities are pre-certified — zero setup. Credentials never live in the template.</p>
+    <div class="wizhead">
+      <div class="wstep done"><b>1 · Knowledge</b>2 slots bound</div>
+      <div class="wstep cur"><b>2 · Connections</b>what Mia can use</div>
+      <div class="wstep"><b>3 · Brand</b></div>
+      <div class="wstep"><b>4 · People</b></div>
+    </div>
+    <div class="panel">
+      <h3>Required capabilities <span class="badge ok">2 platform-ready</span> <span class="badge warn">1 needs you</span></h3>
+      <div class="slot"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7V3M15 7V3"/><path d="M6 7h12v5a6 6 0 0 1-12 0z"/><path d="M12 18v3"/></svg></div><div class="tx"><b>WhatsApp send</b><p>Candidate updates &amp; nudges · platform BSP</p></div><div class="act"><span class="badge ok">Ready ✓ · platform</span></div></div>
+      <div class="slot"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></div><div class="tx"><b>OCR verify</b><p>MyKad/ID extraction · platform vendor pool</p></div><div class="act"><span class="badge ok">Ready ✓ · platform</span></div></div>
+      <div class="slot"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></div><div class="tx"><b>HRMS write</b><p>Where verified crew records land (WRITE step · outbox-protected)</p></div><div class="act"><select id="hrms" onchange="hrmsPick()"><option value="">Connect your HRMS…</option><option>Subway MY — SAP SuccessFactors (existing tool)</option><option>+ New HTTP tool…</option></select></div></div>
+      <p class="ps" style="margin-top:6px">MCP servers your org already registered are matched automatically. Everything here reuses <span class="mono">Settings → Integrations</span> — nothing new to learn.</p>
+    </div>
+    <div class="wizfoot"><button class="btn" onclick="go('v-wiz1')">Back</button><button class="btn pri" id="w2next" disabled onclick="go('v-wiz3')">Next: Brand →</button></div>
+  </section>
+
+  <!-- ═══ VIEW 5 · WIZARD STEP 3: BRAND ═══ -->
+  <section class="view" id="v-wiz3">
+    <button class="back" onclick="go('v-wiz2')">← Connections</button>
+    <div class="eyebrow">Install · Subway MY</div>
+    <h1>Brand &amp; channels</h1>
+    <p class="sub">One install, every channel. Candidates see your brand; the platform footer stays.</p>
+    <div class="wizhead">
+      <div class="wstep done"><b>1 · Knowledge</b></div>
+      <div class="wstep done"><b>2 · Connections</b></div>
+      <div class="wstep cur"><b>3 · Brand</b>how Mia looks &amp; speaks</div>
+      <div class="wstep"><b>4 · People</b></div>
+    </div>
+    <div class="panel">
+      <h3>Theme <span class="badge teal">UiConfig</span></h3>
+      <div class="themerow">
+        <div class="sw on" style="background:#008C15" title="Subway green"></div>
+        <div class="sw" style="background:#2142b9"></div>
+        <div class="sw" style="background:#d0271d"></div>
+        <div class="sw" style="background:#7c3aed"></div>
+        <span class="ps" style="align-self:center">Bubble: rounded · Launcher: chat · Footer: "Powered by BetterPlace"</span>
+      </div>
+      <h3 style="margin-top:16px">Languages <span class="badge y">certified set</span></h3>
+      <p class="ps">Mia v2.3 is certified in 5 languages. Pick your subset — uncertified languages can't be enabled (that's a re-certification, not a toggle).</p>
+      <div class="langs">
+        <button class="on">English</button><button class="on">Bahasa Melayu</button><button>中文</button><button>हिंदी</button><button>Bahasa Indonesia</button><button disabled title="Not in certified set">தமிழ் — not certified</button>
+      </div>
+      <h3 style="margin-top:16px">Channels</h3>
+      <div class="langs">
+        <button class="on">Web chat</button><button class="on">WhatsApp</button><button>Voice (Plivo)</button>
+      </div>
+    </div>
+    <div class="wizfoot"><button class="btn" onclick="go('v-wiz2')">Back</button><button class="btn pri" onclick="go('v-wiz4')">Next: People →</button></div>
+  </section>
+
+  <!-- ═══ VIEW 6 · WIZARD STEP 4: PEOPLE + PREFLIGHT ═══ -->
+  <section class="view" id="v-wiz4">
+    <button class="back" onclick="go('v-wiz3')">← Brand</button>
+    <div class="eyebrow">Install · Subway MY</div>
+    <h1>People &amp; budget — then preflight</h1>
+    <div class="wizhead">
+      <div class="wstep done"><b>1 · Knowledge</b></div>
+      <div class="wstep done"><b>2 · Connections</b></div>
+      <div class="wstep done"><b>3 · Brand</b></div>
+      <div class="wstep cur"><b>4 · People</b>who Mia reports to</div>
+    </div>
+    <div class="panel">
+      <div class="slot"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></div><div class="tx"><b>Exception approver</b><p>Ambiguous verifications park as WAITING_FOR_HUMAN for this role</p></div><div class="act"><select><option>Talent Ops — Meera K.</option></select></div></div>
+      <div class="slot"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></div><div class="tx"><b>Monthly credit cap</b><p>Hard stop + alert at 80%</p></div><div class="act"><select><option>5,000 credits ≈ 270 onboardings</option></select></div></div>
+    </div>
+    <div class="panel" id="preflight" style="display:none">
+      <h3>Preflight <span class="badge warn" id="pfbadge">running…</span></h3>
+      <p class="ps">Nothing activates until every check passes — the same gate every future template upgrade must clear for your org.</p>
+      <div class="check" id="pf1"><span class="st"></span> Documents ingested &amp; indexed (2 slots) <span class="why" id="pf1w">…</span></div>
+      <div class="check" id="pf2"><span class="st"></span> Capabilities authenticated (WhatsApp · OCR · HRMS) <span class="why" id="pf2w">…</span></div>
+      <div class="check" id="pf3"><span class="st"></span> Guardrail floor intact <span class="why" id="pf3w">…</span></div>
+      <div class="check" id="pf4"><span class="st"></span> Languages ⊆ certified set (EN, BM) <span class="why" id="pf4w">…</span></div>
+      <div class="check" id="pf5"><span class="st"></span> Template eval set vs YOUR bindings (12 scripted turns) <span class="why" id="pf5w">…</span></div>
+    </div>
+    <div class="wizfoot"><button class="btn" onclick="go('v-wiz3')">Back</button><button class="btn pri" id="pfbtn" onclick="runPreflight()">Run preflight</button></div>
+  </section>
+
+  <!-- ═══ VIEW 7 · SANDBOX + ACTIVATE ═══ -->
+  <section class="view" id="v-sandbox">
+    <div class="eyebrow">Install · Subway MY · final gate</div>
+    <h1>Talk to your Mia before anyone else does</h1>
+    <p class="sub">Sandbox runs against your real documents and connections — nothing writes to HRMS, no candidate sees it. Activation unlocks after one completed test conversation.</p>
+    <div class="dgrid">
+      <div class="panel">
+        <h3>Sandbox conversation <span class="badge teal">your data · no side effects</span></h3>
+        <div class="chatprev" id="sandbox">
+          <div class="cb bot">👋 Hi! I'm Mia for <b>Subway MY</b>. Ask me anything a new crew member would — try leave policy, or start a mock onboarding.</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn" style="flex:1" onclick="sandboxAsk(this)">Ask: "How many leave days do crew get?"</button>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3>Install summary</h3>
+          <div class="verrow"><span>Template</span><span>Mia · v2.3 (QSR)</span></div>
+          <div class="verrow"><span>Knowledge</span><span>Crew Handbook v4 · Food Safety SOP</span></div>
+          <div class="verrow"><span>Connections</span><span>WhatsApp ✓ OCR ✓ SuccessFactors ✓</span></div>
+          <div class="verrow"><span>Languages</span><span>EN · BM</span></div>
+          <div class="verrow"><span>Channels</span><span>Web · WhatsApp</span></div>
+          <div class="verrow"><span>Approver</span><span>Meera K.</span></div>
+          <div class="verrow"><span>Preflight</span><span style="color:var(--ok)">5/5 passed</span></div>
+        </div>
+        <button class="btn pri" style="width:100%;padding:13px" id="activateBtn" disabled onclick="go('v-live')">Activate Mia →</button>
+        <p class="ps" style="margin-top:8px;text-align:center">locked until the sandbox conversation completes</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ VIEW 8 · LIVE ═══ -->
+  <section class="view" id="v-live">
+    <div class="panel donecard">
+      <div class="big">✓</div>
+      <h1 style="font-size:24px">Mia is on the team.</h1>
+      <p class="sub" style="margin:6px auto 0;max-width:56ch">Install → activate in <b>38 minutes</b>. She's live on web chat and WhatsApp, reporting exceptions to Meera, spending from a capped budget — and every conversation lands in Runs with full audit.</p>
+      <div class="alias">alias <b>subway-my/mia</b> → template mia-qsr <b>v2.3</b> · upgrades preflight against YOUR bindings before repointing · rollback is instant</div>
+      <div class="stat3">
+        <div class="s"><div class="n">38 min</div><div class="l">install → live</div></div>
+        <div class="s"><div class="n">0</div><div class="l">workflow steps you configured</div></div>
+        <div class="s"><div class="n">₹18</div><div class="l">per onboarded worker</div></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+        <a class="btn" href="subway-crew-onboarding.html" style="text-decoration:none">See what candidates get →</a>
+        <button class="btn" onclick="go('v-store')">↺ Back to marketplace</button>
+      </div>
+    </div>
+    <footer style="text-align:center">Prototype · companion to templates-marketplace-prd.html · deck design language · internal demo (Subway = example org)</footer>
+  </section>
+
+</div>
+  </div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo({top:0});
+}
+function slotPick(){
+  const ok = document.getElementById('slot1').value && document.getElementById('slot2').value;
+  document.getElementById('w1next').disabled = !ok;
+}
+function hrmsPick(){ document.getElementById('w2next').disabled = !document.getElementById('hrms').value; }
+document.querySelectorAll('.langs button:not(:disabled)').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('on')));
+document.querySelectorAll('.sw').forEach(s=>s.addEventListener('click',()=>{document.querySelectorAll('.sw').forEach(x=>x.classList.remove('on'));s.classList.add('on')}));
+
+function runPreflight(){
+  document.getElementById('preflight').style.display='';
+  document.getElementById('pfbtn').disabled=true;
+  const checks=[['pf1','indexed 43 docs · 3.1s'],['pf2','3/3 authenticated'],['pf3','floor unmodified ✓'],['pf4','2 of 5 certified'],['pf5','12/12 passed · transcript saved']];
+  let i=0;
+  const step=()=>{
+    if(i>0){const prev=document.getElementById(checks[i-1][0]);prev.className='check ok';prev.querySelector('.st').textContent='✓';document.getElementById(checks[i-1][0]+'w').textContent=checks[i-1][1];}
+    if(i>=checks.length){
+      document.getElementById('pfbadge').textContent='5/5 passed';document.getElementById('pfbadge').className='badge ok';
+      const b=document.getElementById('pfbtn');b.disabled=false;b.textContent='Continue to sandbox →';b.onclick=()=>go('v-sandbox');
+      return;
+    }
+    document.getElementById(checks[i][0]).classList.add('run');
+    i++;setTimeout(step,850);
+  };
+  step();
+}
+function sandboxAsk(btn){
+  btn.disabled=true;
+  const s=document.getElementById('sandbox');
+  s.insertAdjacentHTML('beforeend','<div class="cb user">How many leave days do crew get?</div>');
+  setTimeout(()=>{
+    s.insertAdjacentHTML('beforeend','<div class="cb bot">Crew members get <b>14 days of annual leave</b> plus public holidays, per the Crew Handbook v4 (section 5.2). Probation crew accrue from month one. Want the sick-leave policy too?</div>');
+    setTimeout(()=>{
+      s.insertAdjacentHTML('beforeend','<div class="cb bot" style="border-color:var(--ok);font-size:11px">✓ Grounded in YOUR handbook · citation attached · sandbox test complete</div>');
+      const a=document.getElementById('activateBtn');a.disabled=false;
+    },900);
+  },1000);
+}
+</script>
+</body>
+</html>

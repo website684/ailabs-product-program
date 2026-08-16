@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Labs Admin — Onboarding &amp; Verification (Subway)</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   PROTOTYPE — AI Labs admin view: how the team enables the Subway
+   onboarding+verification experience. Design language = ai-labs-mfe
+   (tokens.css: --primary #1B2D93, --primary-accent #0953E5, async #7c3aed)
+   ═══════════════════════════════════════════════════════════════════ */
+/* ═══ BetterPlace Studio deck design language ═══════════════════
+   Single visual world (deck-dark, by design — matches studio deck):
+   navy #05081f ground · Poppins display · Inter body ·
+   JetBrains Mono labels · yellow #ffc401 accent */
+/* ═══ AI Labs PRODUCT design language (in-app surface) ═══ */
+:root{
+  --primary:#1B2D93; --primary-text:#1B2D93; --accent:#0953E5;
+  --primary-light:#e3ecff; --primary-lighter:#f1f4ff;
+  --async:#7c3aed; --async-light:#ede9fe;
+  --success:#16a34a; --success-light:#dcfce7;
+  --warning:#d97706; --warning-light:#fef3c7;
+  --danger:#dc2626; --danger-light:#fee2e2;
+  --ok:#16a34a; --ok-light:#dcfce7; --warn:#d97706; --warn-light:#fef3c7;
+  --err:#dc2626; --err-light:#fee2e2;
+  --bg:#f5f6fa; --surface:#ffffff; --muted:#f9fafb; --surface-muted:#f9fafb;
+  --border:#e1e4e8; --border-2:#d1d5db; --border-strong:#d1d5db;
+  --text:#1a1a2e; --text-2:#6b7280; --text-3:#9ca3af;
+  --side:#1a1a2e; --side-text:#e5e7f0;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --disp:var(--sans);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r-sm:6px; --r:10px; --r-lg:14px; --r-pill:999px;
+  --shadow:0 1px 2px rgba(26,26,46,.05),0 6px 20px -8px rgba(26,26,46,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── shell: sidebar + main (mobile-first: stacked) ─────────────── */
+.shell{display:flex;flex-direction:column;min-height:100dvh}
+.side{background:var(--side);color:var(--side-text);padding:12px 14px;display:flex;align-items:center;gap:10px;overflow-x:auto}
+.side .brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:#fff;flex:none}
+.side .brand .lg{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#6d28d9,#8b5cf6);display:grid;place-items:center;font-size:13px}
+.nav{display:flex;gap:2px}
+.nav a{color:var(--side-text);opacity:.72;text-decoration:none;font-size:12.5px;padding:6px 10px;border-radius:7px;white-space:nowrap}
+.nav a.on{background:rgba(255,255,255,.1);opacity:1;font-weight:600}
+.org-pill{margin-left:auto;flex:none;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:var(--r-pill);padding:4px 11px;font-size:11.5px}
+.org-pill .dot{width:16px;height:16px;border-radius:4px;background:#008C15;display:grid;place-items:center;color:#FFC600;font-weight:800;font-size:9px}
+
+@media(min-width:980px){
+  .shell{flex-direction:row}
+  .side{flex-direction:column;align-items:stretch;width:218px;flex:none;padding:18px 14px;position:sticky;top:0;height:100dvh;overflow:auto}
+  .side .brand{font-size:15px;margin-bottom:18px}
+  .nav{flex-direction:column}
+  .nav a{padding:8px 11px;font-size:13px}
+  .nav .sec{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;opacity:.45;margin:14px 4px 4px}
+  .org-pill{margin:auto 0 0;justify-content:center}
+}
+@media(max-width:979px){.nav .sec{display:none}}
+
+.main{flex:1;min-width:0;padding:20px 16px 72px}
+@media(min-width:980px){.main{padding:28px 34px 80px}}
+.crumb{font-size:11.5px;color:var(--text-3);font-family:var(--mono)}
+.page-h{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 4px}
+.page-h h1{font-size:21px;margin:0;font-weight:700;letter-spacing:-.01em}
+.page-h .env{font-size:10.5px;font-family:var(--mono);background:var(--warning-light);color:var(--warning);border-radius:var(--r-pill);padding:3px 10px;letter-spacing:.05em}
+.page-sub{color:var(--text-2);font-size:13px;margin:0 0 18px;max-width:76ch}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:22px;overflow-x:auto}
+.tabs button{background:none;border:none;padding:10px 14px;font-size:13.5px;color:var(--text-2);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tabs button.on{color:var(--text);font-weight:650;border-bottom-color:var(--accent)}
+.tabpane{display:none}
+.tabpane.on{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+
+/* cards & atoms */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:16px}
+.card h3{margin:0 0 4px;font-size:15px;font-weight:650}
+.card .sub{color:var(--text-2);font-size:12.5px;margin:0 0 14px}
+.grid2{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:900px){.grid2{grid-template-columns:1fr 1fr}}
+.badge{display:inline-block;font-size:10.5px;font-weight:650;border-radius:var(--r-pill);padding:2px 9px}
+.badge.chat{background:var(--primary-light);color:var(--primary)}
+.badge.wf{background:var(--async-light);color:var(--async)}
+.badge.ok{background:var(--success-light);color:var(--success)}
+.badge.warn{background:var(--warning-light);color:var(--warning)}
+.badge.err{background:var(--danger-light);color:var(--danger)}
+.badge.mut{background:var(--surface-muted);color:var(--text-2);border:1px solid var(--border)}
+.mono{font-family:var(--mono);font-size:.92em}
+.kv{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.kv span{font-family:var(--mono);font-size:10.5px;background:var(--surface-muted);border:1px solid var(--border);border-radius:6px;padding:2px 8px;color:var(--text-2)}
+
+/* journey (blueprint) */
+.journey{display:grid;gap:9px}
+.jstage{display:grid;grid-template-columns:30px 1fr;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 15px}
+.jstage .n{width:26px;height:26px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:12px;font-family:var(--mono)}
+.jstage b{font-size:13.5px}
+.jstage p{margin:2px 0 0;font-size:12.5px;color:var(--text-2)}
+.jstage .stat{font-family:var(--mono);font-size:10.5px;color:var(--accent);margin-top:4px}
+.principles{counter-reset:pr;display:grid;gap:6px;grid-template-columns:1fr}
+@media(min-width:900px){.principles{grid-template-columns:1fr 1fr}}
+.principles div{counter-increment:pr;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px 10px 40px;position:relative;font-size:12.5px}
+.principles div::before{content:counter(pr);position:absolute;left:13px;top:10px;font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:700}
+
+/* step list (agent config) */
+.steps{display:grid;gap:8px}
+.step{border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;background:var(--surface-muted)}
+.step .t{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.step .t b{font-size:13px}
+.step .meta{font-size:11.5px;color:var(--text-2);margin-top:3px}
+.toggles{display:grid;grid-template-columns:1fr;gap:6px}
+@media(min-width:700px){.toggles{grid-template-columns:1fr 1fr}}
+.tg{display:flex;align-items:center;gap:9px;font-size:12.5px;background:var(--surface-muted);border:1px solid var(--border);border-radius:8px;padding:7px 11px}
+.tg .sw{width:30px;height:17px;border-radius:10px;background:var(--border-strong);position:relative;flex:none}
+.tg.on .sw{background:var(--success)}
+.tg .sw::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:left .15s}
+.tg.on .sw::after{left:15px}
+
+/* DAG */
+.dagwrap{overflow-x:auto;padding:6px 2px 12px}
+.dag{display:flex;align-items:flex-start;gap:0;min-width:900px}
+.dnode{width:150px;flex:none;border:1.5px solid var(--border-strong);border-radius:var(--r);background:var(--surface);padding:9px 11px;position:relative}
+.dnode .ty{font-family:var(--mono);font-size:9px;letter-spacing:.09em;border-radius:5px;padding:1px 7px;display:inline-block;margin-bottom:5px}
+.dnode b{font-size:12px;display:block;line-height:1.3}
+.dnode p{margin:3px 0 0;font-size:10.5px;color:var(--text-2);line-height:1.35}
+.dnode.tool .ty{background:var(--primary-light);color:var(--primary)}
+.dnode.write .ty{background:var(--danger-light);color:var(--danger)}
+.dnode.llm .ty{background:var(--async-light);color:var(--async)}
+.dnode.wait .ty{background:var(--warning-light);color:var(--warning)}
+.dnode.ctrl .ty{background:var(--success-light);color:var(--success)}
+.darrow{flex:none;width:34px;display:grid;place-items:center;align-self:center;color:var(--text-3);font-size:15px}
+.dbranch{display:grid;gap:8px}
+.dag-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--text-2)}
+.dag-legend span{display:inline-flex;align-items:center;gap:5px}
+.dag-legend i{width:9px;height:9px;border-radius:3px;display:inline-block}
+
+/* runs table + case review */
+.viewchips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.viewchips button{border:1px solid var(--border-strong);background:var(--surface);border-radius:var(--r-pill);padding:5px 13px;font-size:12px;color:var(--text-2)}
+.viewchips button.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:650}
+.tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th,td{text-align:left;padding:10px 13px;border-top:1px solid var(--border);font-size:12.5px}
+th{border-top:none;background:var(--surface-muted);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);font-weight:500}
+td .who{font-weight:600}
+td .sub2{font-size:11px;color:var(--text-3)}
+.sla{font-family:var(--mono);font-size:11px}
+.sla.breach{color:var(--danger);font-weight:700}
+tr.sel{background:var(--primary-lighter)}
+.dots{display:inline-flex;gap:3px}
+.dots i{width:8px;height:8px;border-radius:50%}
+.dots .g{background:var(--success)}.dots .a{background:var(--warning)}.dots .r{background:var(--danger)}.dots .p{background:var(--border-strong)}
+
+/* case review */
+.case{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:980px){.case{grid-template-columns:1.05fr .95fr}}
+.doc-side{background:linear-gradient(135deg,#dcebf7,#eef5fb);border-radius:var(--r);padding:16px;color:#233;font-size:11px;line-height:1.7;position:relative;min-height:150px}
+:root[data-theme="dark"] .doc-side{background:linear-gradient(135deg,#28333e,#212a34);color:#cfe0ee}
+@media (prefers-color-scheme:dark){.doc-side{background:linear-gradient(135deg,#28333e,#212a34);color:#cfe0ee}}
+.doc-side b{letter-spacing:.04em}
+.doc-side .ph{width:56px;height:66px;background:#b9cbdb;border-radius:6px;float:right;display:grid;place-items:center;font-size:26px}
+.fieldrow{display:flex;justify-content:space-between;gap:10px;padding:8px 2px;border-top:1px solid var(--border);font-size:12.5px;align-items:center}
+.fieldrow:first-child{border-top:none}
+.fieldrow .k{color:var(--text-2);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+.fieldrow .v{font-weight:600}
+.actions{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}
+.btn{border-radius:9px;border:1px solid var(--border-strong);background:var(--surface);padding:9px 16px;font-size:13px;font-weight:600;color:var(--text)}
+.btn.ok{background:var(--success);border-color:var(--success);color:#fff}
+.btn.err{background:var(--surface);border-color:var(--danger);color:var(--danger)}
+.timeline{display:grid;gap:0}
+.tl{display:grid;grid-template-columns:22px 1fr auto;gap:10px;padding:9px 0;position:relative}
+.tl::before{content:"";position:absolute;left:10px;top:26px;bottom:-4px;width:2px;background:var(--border)}
+.tl:last-child::before{display:none}
+.tl .b{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;z-index:1}
+.tl.done .b{background:var(--success-light);color:var(--success)}
+.tl.run .b{background:var(--warning-light);color:var(--warning)}
+.tl.pend .b{background:var(--surface-muted);color:var(--text-3);border:1px solid var(--border)}
+.tl b{font-size:12.5px}
+.tl p{margin:1px 0 0;font-size:11px;color:var(--text-2)}
+.tl .tm{font-family:var(--mono);font-size:10px;color:var(--text-3);white-space:nowrap}
+
+/* capability map */
+.capmap .tblwrap table{min-width:840px}
+.gap-note{border-left:3px solid var(--accent);background:var(--primary-lighter);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;font-size:12.5px;color:var(--text-2);margin-top:14px}
+footer{margin-top:30px;color:var(--text-3);font-size:11.5px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- sidebar (mirrors AILabsSidebar) -->
+  <aside class="side">
+    <div class="brand"><span class="lg">⚗️</span> AI Labs</div>
+    <nav class="nav">
+      <div class="sec">Registry</div>
+      <a href="#">Knowledge Base</a>
+      <a href="#" class="on">Agents</a>
+      <a href="#">Runs</a>
+      <a href="#">Integrations</a>
+      <a href="#">Webhooks</a>
+      <a href="#">MCP Registry</a>
+      <div class="sec">Observability</div>
+      <a href="#">Analytics</a>
+      <a href="#">Guardrail Events</a>
+      <div class="sec">Admin</div>
+      <a href="#">Credits</a>
+      <a href="#">Settings</a>
+    </nav>
+    <div class="org-pill"><span class="dot">S</span> Subway MY · subway-my</div>
+  </aside>
+
+  <main class="main">
+    <div class="crumb">Agents / Solutions / <b>Onboarding &amp; Verification</b></div>
+    <div class="page-h">
+      <h1>Crew Onboarding &amp; Verification — Subway</h1>
+      <span class="env">UAT · PROTOTYPE</span>
+    </div>
+    <p class="page-sub">How AI Labs powers the candidate experience end-to-end: one conversational agent for the candidate, one workflow agent for verification, existing widgets for every interaction. This page is the team-facing map — flip through the tabs.</p>
+
+    <div class="tabs" role="tablist">
+      <button class="on" data-t="t1">Blueprint</button>
+      <button data-t="t2">Agent Config</button>
+      <button data-t="t3">Verification Pipeline</button>
+      <button data-t="t4">Candidate Runs</button>
+      <button data-t="t5">Capability Map</button>
+    </div>
+
+    <!-- ══ TAB 1 · BLUEPRINT ══ -->
+    <div class="tabpane on" id="t1">
+      <div class="grid2">
+        <div class="card">
+          <h3>Candidate journey — 8 stages, one thread</h3>
+          <p class="sub">Research-backed flow (63 findings, 8 dimensions — see blueprint doc). Every stage lives in one chat; nothing requires a login or app install.</p>
+          <div class="journey">
+            <div class="jstage"><span class="n">1</span><div><b>White-label entry</b><p>Offer link on WhatsApp/SMS → branded landing → language picked once, persists everywhere.</p><span class="stat">chat apply ≈92% step conversion vs ≈20% portal forms</span></div></div>
+            <div class="jstage"><span class="n">2</span><div><b>Consent gate</b><p>Itemized, plain-language, timestamped — before any data is collected. Withdraw path always available.</p><span class="stat">DPDP Rules 2025 / PDPA hard requirement</span></div></div>
+            <div class="jstage"><span class="n">3</span><div><b>Confirm-don't-retype details</b><p>Agent shows what it knows from the ATS; candidate corrects, never re-keys.</p></div></div>
+            <div class="jstage"><span class="n">4</span><div><b>Document capture + OCR</b><p>Guided camera capture, client-side quality gate, extracted fields shown for confirmation. DPI waterfall where available (DigiLocker / MyDigital ID / Dukcapil / Singpass) skips capture entirely.</p><span class="stat">assisted capture cuts blur/glare rejects up to 70%</span></div></div>
+            <div class="jstage"><span class="n">5</span><div><b>Selfie liveness + face match</b><p>Passive liveness (no gestures), separate biometric opt-in, retention microcopy under the camera.</p></div></div>
+            <div class="jstage"><span class="n">6</span><div><b>Background checks — async</b><p>Consent → dispatch to workflow pipeline → 3-state candidate status. Slow checks never block the journey.</p><span class="stat">criminal checks 2–7 days — must run in background</span></div></div>
+            <div class="jstage"><span class="n">7</span><div><b>AI interview + training reels</b><p>Structured scored questions (text/voice), then Skilling reels with MCQ frames inline in chat.</p><span class="stat">chat microlearning ≈85% completion vs 20–30% LMS</span></div></div>
+            <div class="jstage"><span class="n">8</span><div><b>Done → Day 1 nudges</b><p>Verified crew ID, HRMS webhook, offer→Day-1 tracked as its own funnel stage with reminder cadence.</p><span class="stat">post-offer ghosting = costliest drop-off in frontline hiring</span></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Non-negotiable design principles</h3>
+          <p class="sub">Ranked. From the multi-agent research synthesis — argue with these before changing the flow.</p>
+          <div class="principles">
+            <div>Zero login, zero app download, anywhere in the candidate flow</div>
+            <div>Chat-native and mobile-first; design for 2G/3G reliability</div>
+            <div>Consent before collection — itemized, timestamped, per category</div>
+            <div>State persists to the phone number, not a session — resumable for days</div>
+            <div>Language chosen once, honored in every module incl. reels</div>
+            <div>Confirm-don't-retype for every OCR/DPI-fetched field</div>
+            <div>Passive biometrics by default; step-up only on risk flags</div>
+            <div>Candidate sees 3 states max; adjudication complexity never leaks</div>
+            <div>Every check has its own progress + SLA clock — never block on the slowest</div>
+            <div>Offer→Day-1 is a first-class tracked stage with nudge cadence</div>
+          </div>
+          <div class="gap-note"><b>Two-tier status architecture</b> (Checkr pattern): the candidate chat shows In&nbsp;Progress / Needs&nbsp;Your&nbsp;Attention / Cleared. The ops console (tab 4) holds the full adjudication state machine — risk scores and discrepancy notes never reach the candidate UI.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 2 · AGENT CONFIG ══ -->
+    <div class="tabpane" id="t2">
+      <div class="grid2">
+        <div class="card">
+          <h3>subway-crew-onboarding <span class="badge chat">CHAT_AGENT</span> <span class="badge ok">PUBLISHED</span></h3>
+          <p class="sub">The candidate-facing conversation. Every stage is a <span class="mono">chat_workflow_step</span> with its own widget, tools and completion rule — configuration, not code.</p>
+          <div class="steps">
+            <div class="step"><div class="t"><b>1 · Consent &amp; language</b> <span class="badge mut">widget: consent_card</span></div><div class="meta">completion: explicit_confirm · logs consent event w/ timestamp + policy version</div></div>
+            <div class="step"><div class="t"><b>2 · Confirm details</b> <span class="badge mut">widget: form</span></div><div class="meta">prefill: ATS offer payload · required_fields: name, phone, dob</div></div>
+            <div class="step"><div class="t"><b>3 · ID capture</b> <span class="badge mut">widget: image_capture</span> <span class="badge mut">tool: ocr_extract</span></div><div class="meta">tool_result_bindings: ic_number→masked, dob→age_check · retry ladder ≤3</div></div>
+            <div class="step"><div class="t"><b>4 · Confirm extraction</b> <span class="badge mut">widget: confirmation</span></div><div class="meta">shows OCR fields + confidence · low-confidence fields flagged for edit</div></div>
+            <div class="step"><div class="t"><b>5 · Selfie liveness</b> <span class="badge mut">widget: image_capture(selfie)</span> <span class="badge mut">tool: face_match</span></div><div class="meta">separate biometric consent · completion blocked until liveness pass or manual route</div></div>
+            <div class="step"><div class="t"><b>6 · BGV consent + dispatch</b> <span class="badge mut">tool: create_bgv_run</span></div><div class="meta">triggers subway-bgv-pipeline (WORKFLOW_AGENT) · non-blocking</div></div>
+            <div class="step"><div class="t"><b>7 · Interview</b> <span class="badge mut">widget: quick_reply + voice</span></div><div class="meta">fixed rubric in step system_prompt · scores → run output · human decides</div></div>
+            <div class="step"><div class="t"><b>8 · Training reel</b> <span class="badge mut">widget: reel_player ⚠ NEW</span> <span class="badge mut">widget: mcq</span></div><div class="meta">source: Skilling LMS reels API · MCQ pass required · completion → crew ID card</div></div>
+          </div>
+          <div class="kv"><span>language: [en, ms, zh]</span><span>voice: enabled (tts: gpt-4o-mini-tts)</span><span>ui_config: subway theme</span><span>session_media: enabled</span><span>model: per-step override</span></div>
+        </div>
+        <div class="card">
+          <h3>Guardrails <span class="badge ok">org policy + agent overrides</span></h3>
+          <p class="sub">Resolved policy for this agent (effective values). Consent + PII events land in Guardrail Events, queryable per run.</p>
+          <div class="toggles">
+            <div class="tg on"><span class="sw"></span> PII masking (traces &amp; logs)</div>
+            <div class="tg on"><span class="sw"></span> Prompt-injection guard</div>
+            <div class="tg on"><span class="sw"></span> ID number masking (display last-4 only)</div>
+            <div class="tg on"><span class="sw"></span> KB grounding — no invented policy answers</div>
+            <div class="tg on"><span class="sw"></span> Out-of-scope deflection (jobs/pay Qs → HR)</div>
+            <div class="tg on"><span class="sw"></span> Toxicity + profanity filter</div>
+            <div class="tg on"><span class="sw"></span> Data-leakage guard (no cross-candidate recall)</div>
+            <div class="tg"><span class="sw"></span> Human handoff — Day-1 escalation queue (planned)</div>
+          </div>
+          <h3 style="margin-top:20px">White-label theme <span class="badge mut">UiConfig</span></h3>
+          <p class="sub">Same agent engine, org-skinned. Changing client = changing this block.</p>
+          <div class="kv"><span>theme_color: #008C15</span><span>avatar_kind: initial</span><span>avatar_tint: green</span><span>bubble_radius: rounded</span><span>launcher_icon: chat</span><span>subtitle: "Subway Crew Assistant"</span><span>footer: Powered by BetterPlace</span></div>
+          <div class="gap-note">Multi-org rollout = clone agent → swap UiConfig + KB documents + store data MCP. No engineering in the loop — this is the platform promise.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 3 · VERIFICATION PIPELINE ══ -->
+    <div class="tabpane" id="t3">
+      <div class="card">
+        <h3>subway-bgv-pipeline <span class="badge wf">WORKFLOW_AGENT</span> <span class="badge ok">PUBLISHED</span></h3>
+        <p class="sub">Dispatched by chat step 6. Runs asynchronously on the step executor — Kafka-dispatched typed steps, outbox-protected writes, human escalation built in. The candidate never waits on this.</p>
+        <div class="dagwrap">
+          <div class="dag">
+            <div class="dnode tool"><span class="ty">CALL A TOOL</span><b>OCR verify</b><p>Re-validate extraction server-side · confidence gate</p></div>
+            <div class="darrow">→</div>
+            <div class="dnode tool"><span class="ty">CALL A TOOL</span><b>Identity match</b><p>IC vs national registry (JPN / Dukcapil / DigiLocker per country)</p></div>
+            <div class="darrow">→</div>
+            <div class="dnode ctrl"><span class="ty">BRANCH</span><b>Match ≥ 0.95?</b><p>below threshold → manual review queue (WAITING_FOR_HUMAN)</p></div>
+            <div class="darrow">→</div>
+            <div class="dbranch">
+              <div class="dnode write"><span class="ty">SAVE DATA</span><b>Create BGV case</b><p>court-record check via Verify partner · outbox + idempotency key</p></div>
+              <div class="dnode tool"><span class="ty">CALL A TOOL</span><b>Right-to-work</b><p>age + eligibility rules · instant</p></div>
+            </div>
+            <div class="darrow">→</div>
+            <div class="dnode wait"><span class="ty">PAUSE</span><b>Await court result</b><p>webhook callback · SLA 24h · nudges ops at 20h</p></div>
+            <div class="darrow">→</div>
+            <div class="dnode llm"><span class="ty">AI STEP</span><b>Adjudication summary</b><p>drafts traffic-light rec + evidence list — human approves</p></div>
+            <div class="darrow">→</div>
+            <div class="dnode write"><span class="ty">SAVE DATA</span><b>Publish result</b><p>HRMS update + WhatsApp status push · webhook w/ DLQ</p></div>
+          </div>
+        </div>
+        <div class="dag-legend">
+          <span><i style="background:var(--primary)"></i> Call a tool (TOOL)</span>
+          <span><i style="background:var(--success)"></i> Branch (CONTROL)</span>
+          <span><i style="background:var(--danger)"></i> Save data (WRITE · outbox)</span>
+          <span><i style="background:var(--warning)"></i> Pause (WAIT · callback)</span>
+          <span><i style="background:var(--async)"></i> AI step (LLM)</span>
+        </div>
+        <div class="gap-note"><b>Why this is safe to sell:</b> WRITE steps go through the transactional outbox with deterministic idempotency keys (no double-writes on retry); exhausted retries park the run in <span class="mono">WAITING_FOR_HUMAN</span>; ops can retry or resolve a single step from the Runs screen without re-running the pipeline. All shipped in ghost_operators today.</div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 4 · CANDIDATE RUNS ══ -->
+    <div class="tabpane" id="t4">
+      <div class="viewchips">
+        <button class="on">All active · 214</button>
+        <button>Needs review · 6</button>
+        <button>SLA breach · 1</button>
+        <button>Cleared today · 38</button>
+        <button>Ghosting risk · 12</button>
+      </div>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>Candidate</th><th>Store</th><th>Journey</th><th>Checks (ID · RTW · Court)</th><th>Interview</th><th>Training</th><th>SLA</th><th>State</th></tr></thead>
+          <tbody>
+            <tr class="sel">
+              <td><div class="who">Aisyah Rahman</div><div class="sub2">+60 12 336 •••1 · run_8842</div></td>
+              <td>Suria KLCC</td><td><span class="badge ok">Complete · 9m 12s</span></td>
+              <td><span class="dots"><i class="g"></i><i class="g"></i><i class="a"></i></span> <span class="sub2">court running</span></td>
+              <td><span class="badge ok">3/3</span></td><td><span class="badge ok">Reel 1 ✓ quiz ✓</span></td>
+              <td class="sla">18h left</td><td><span class="badge warn">1 check open</span></td>
+            </tr>
+            <tr>
+              <td><div class="who">Daniel Wong</div><div class="sub2">+60 17 882 •••4 · run_8839</div></td>
+              <td>Mid Valley</td><td><span class="badge warn">At stage 4 · idle 2h</span></td>
+              <td><span class="dots"><i class="g"></i><i class="p"></i><i class="p"></i></span> <span class="sub2">awaiting docs</span></td>
+              <td><span class="badge mut">—</span></td><td><span class="badge mut">—</span></td>
+              <td class="sla">nudge in 1h</td><td><span class="badge mut">In progress</span></td>
+            </tr>
+            <tr>
+              <td><div class="who">Priya Nair</div><div class="sub2">+60 16 204 •••8 · run_8831</div></td>
+              <td>Pavilion</td><td><span class="badge ok">Complete · 11m 40s</span></td>
+              <td><span class="dots"><i class="g"></i><i class="g"></i><i class="a"></i></span> <span class="sub2">name mismatch 0.91</span></td>
+              <td><span class="badge ok">3/3</span></td><td><span class="badge ok">Reel 1 ✓</span></td>
+              <td class="sla breach">SLA −3h</td><td><span class="badge err">Needs review</span></td>
+            </tr>
+            <tr>
+              <td><div class="who">Hafiz Ismail</div><div class="sub2">+60 11 550 •••2 · run_8820</div></td>
+              <td>KL Sentral</td><td><span class="badge ok">Complete · 8m 03s</span></td>
+              <td><span class="dots"><i class="g"></i><i class="g"></i><i class="g"></i></span> <span class="sub2">all clear</span></td>
+              <td><span class="badge ok">3/3</span></td><td><span class="badge ok">4/4 reels</span></td>
+              <td class="sla">—</td><td><span class="badge ok">Cleared</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3>Case review — Priya Nair <span class="badge err">amber · name mismatch</span></h3>
+        <p class="sub">Deep-review UI for the ~5% needing a human: evidence side-by-side, one decision, full audit. Amber rate this month: 2.3% (benchmark 1–4%).</p>
+        <div class="case">
+          <div>
+            <div class="doc-side">
+              <div class="ph">👩🏽</div>
+              <b>KAD PENGENALAN · MyKad</b><br>
+              920716-08-••34<br>
+              PRIYA A/P NAIR<br>
+              NO 3 JALAN BUKIT BINTANG 2<br>
+              55100 KUALA LUMPUR
+            </div>
+            <div class="kv" style="margin-top:10px"><span>capture quality: 0.94</span><span>liveness: pass</span><span>face match: 0.97</span></div>
+          </div>
+          <div>
+            <div class="fieldrow"><span class="k">Name — OCR</span><span class="v">PRIYA A/P NAIR</span></div>
+            <div class="fieldrow"><span class="k">Name — ATS offer</span><span class="v" style="color:var(--warning)">PRIYA NAIR ⚠</span></div>
+            <div class="fieldrow"><span class="k">Registry match</span><span class="v">0.91 (threshold 0.95)</span></div>
+            <div class="fieldrow"><span class="k">Likely cause</span><span class="v">patronymic "A/P" dropped in ATS</span></div>
+            <div class="fieldrow"><span class="k">Consent audit</span><span class="v mono" style="font-size:11px">general 14:02:11 · biometric 14:04:56 · BGV 14:06:20</span></div>
+            <div class="fieldrow"><span class="k">Retention</span><span class="v mono" style="font-size:11px">selfie purged ✓ · IC data auto-purge 14 Nov 2026</span></div>
+            <div class="actions">
+              <button class="btn ok">Approve — name variant</button>
+              <button class="btn">Request re-upload</button>
+              <button class="btn err">Escalate to Verify team</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Run timeline — Aisyah Rahman <span class="badge mut mono">run_8842</span></h3>
+        <div class="timeline">
+          <div class="tl done"><span class="b">✓</span><div><b>Consent gate</b><p>policy v3.1 · en · logged as guardrail event</p></div><span class="tm">14:02:11</span></div>
+          <div class="tl done"><span class="b">✓</span><div><b>ID capture + OCR</b><p>1 retry (glare) · extraction conf 0.97 · IC masked</p></div><span class="tm">14:04:31</span></div>
+          <div class="tl done"><span class="b">✓</span><div><b>Liveness + face match</b><p>passive · 98.4% vs MyKad photo · selfie purged post-match</p></div><span class="tm">14:05:12</span></div>
+          <div class="tl done"><span class="b">✓</span><div><b>BGV dispatched → subway-bgv-pipeline</b><p>identity ✓ 2.1s · right-to-work ✓ 0.8s</p></div><span class="tm">14:06:20</span></div>
+          <div class="tl done"><span class="b">✓</span><div><b>Interview · 3/3 rubric pass</b><p>availability match · voice answer 1 · flagged none</p></div><span class="tm">14:09:02</span></div>
+          <div class="tl done"><span class="b">✓</span><div><b>Reel 1 + MCQ pass</b><p>Food Safety Basics · 1st attempt</p></div><span class="tm">14:11:18</span></div>
+          <div class="tl run"><span class="b">…</span><div><b>Court record check</b><p>WAIT step · webhook callback · SLA 24h (18h left)</p></div><span class="tm">running</span></div>
+          <div class="tl pend"><span class="b">○</span><div><b>Publish → HRMS + WhatsApp push</b><p>blocked on court result</p></div><span class="tm">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 5 · CAPABILITY MAP ══ -->
+    <div class="tabpane" id="t5">
+      <div class="card capmap">
+        <h3>What exists today vs what we must build</h3>
+        <p class="sub">Every moment in the candidate demo, mapped to the platform capability that powers it — read from the qa/stage-qa code on 16 Aug. This is the build list for the roadmap conversation.</p>
+        <div class="tblwrap">
+          <table>
+            <thead><tr><th>Experience moment</th><th>Platform capability</th><th>Where it lives</th><th>Status</th><th>Build gap</th></tr></thead>
+            <tbody>
+              <tr><td>White-label chat + theme</td><td>UiConfig (11 fields) + embed/direct link</td><td class="mono">agent_registry · agent-ui</td><td><span class="badge ok">Shipped</span></td><td>—</td></tr>
+              <tr><td>Multi-step guided conversation</td><td>CHAT_AGENT chat_workflow_steps (23 fields/step)</td><td class="mono">ghost_operators</td><td><span class="badge ok">Shipped</span></td><td>—</td></tr>
+              <tr><td>Progress / form / quick replies</td><td>Progress, Form, QuickReply renderers</td><td class="mono">agent-ui widgets</td><td><span class="badge ok">Shipped</span></td><td>—</td></tr>
+              <tr><td>Camera capture in chat</td><td>ImageCapture renderer (native cam + webcam)</td><td class="mono">agent-ui widgets</td><td><span class="badge ok">Shipped</span></td><td>client-side blur/glare gate</td></tr>
+              <tr><td>OCR extraction + confirm</td><td>TOOL step → OCR vendor + Confirmation widget</td><td class="mono">tool_registry + widgets</td><td><span class="badge warn">Partial</span></td><td>OCR vendor tool config + confidence UI</td></tr>
+              <tr><td>DPI fetch (DigiLocker etc.)</td><td>TOOL step → country DPI connectors</td><td class="mono">tool_registry / MCP</td><td><span class="badge err">Build</span></td><td>DigiLocker, MyDigital ID, Dukcapil, Singpass connectors</td></tr>
+              <tr><td>Selfie liveness + face match</td><td>ImageCapture + vendor liveness API</td><td class="mono">new tool integration</td><td><span class="badge err">Build</span></td><td>passive-liveness vendor (HyperVerge-class)</td></tr>
+              <tr><td>Async BGV pipeline</td><td>WORKFLOW_AGENT DAG · outbox · WAIT · retry/resolve</td><td class="mono">ghost_operators</td><td><span class="badge ok">Shipped</span></td><td>Verify-partner tool wiring</td></tr>
+              <tr><td>Consent audit trail</td><td>Guardrail events (queryable per run)</td><td class="mono">guardrails module</td><td><span class="badge warn">Partial</span></td><td>consent-typed event + policy version stamp</td></tr>
+              <tr><td>AI interview (text/voice)</td><td>LLM step + rubric · VoiceConfig · speech-gateway</td><td class="mono">adk + speech-gateway</td><td><span class="badge warn">Partial</span></td><td>rubric scoring template + fairness audit</td></tr>
+              <tr><td>Reels in chat + MCQ</td><td>Skilling reels + MCQ frame · Mcq widget</td><td class="mono">Skilling LMS + widgets</td><td><span class="badge err">Build</span></td><td><b>reel_player widget type</b> + LMS content API bridge</td></tr>
+              <tr><td>WhatsApp as channel</td><td>channel_open (Plivo voice exists)</td><td class="mono">channel_open</td><td><span class="badge err">Build</span></td><td>WhatsApp BSP integration + resumable session mapping</td></tr>
+              <tr><td>Ops queue + case review</td><td>Runs list + RunInspector + WAITING_FOR_HUMAN</td><td class="mono">mfe GhostOperators</td><td><span class="badge warn">Partial</span></td><td>saved views, SLA clocks, side-by-side case UI</td></tr>
+              <tr><td>Funnel + ghosting analytics</td><td>analytics module (summary/timeseries/sessions)</td><td class="mono">analytics</td><td><span class="badge warn">Partial</span></td><td>stage-conversion + offer→Day-1 KPI</td></tr>
+              <tr><td>Auto-purge / retention jobs</td><td>—</td><td class="mono">new</td><td><span class="badge err">Build</span></td><td>retention scheduler tied to employment status</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="gap-note"><b>Reading the gaps:</b> 6 of 15 moments are fully shipped, 5 are partial, 4 need net-new build. The four builds (DPI connectors, liveness vendor, reel_player widget, WhatsApp channel) are all <i>integration-shaped</i>, not platform-shaped — the orchestration core already carries them. That's the roadmap story: the platform is ready; the product is a set of connectors + one widget + ops polish.</div>
+      </div>
+      <footer>Prototype pair: candidate demo (subway-crew-onboarding.html) ↔ this admin view · grounded in ai-labs-mfe@qa &amp; ghost_operators@stage/qa · 16 Aug 2026</footer>
+    </div>
+
+  </main>
+</div>
+
+<script>
+document.querySelectorAll('.tabs button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.tabpane').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.getElementById(b.dataset.t).classList.add('on');
+  });
+});
+</script>
+</body>
+</html>
