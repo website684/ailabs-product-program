@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frontline Ops Problem Statements × AI Labs — Solution Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1B2D93; --accent:#0953E5;
+  --primary-light:#e3ecff; --primary-lighter:#f1f4ff;
+  --async:#7c3aed; --async-light:#ede9fe;
+  --ok:#15803d; --ok-light:#dcfce7; --warn:#b45309; --warn-light:#fef3c7;
+  --err:#dc2626; --err-light:#fee2e2;
+  --bg:#ffffff; --muted:#f5f6fa; --border:#e1e4e8; --border-2:#d1d5db;
+  --text:#111827; --text-2:#374151; --text-3:#6b7280;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --disp:"Poppins",var(--sans);
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --shadow:0 1px 2px rgba(17,24,39,.05),0 6px 18px -10px rgba(17,24,39,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.doc{max-width:960px;margin:0 auto;padding:40px 22px 90px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 10px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:28px;height:3px;background:var(--accent);flex:none}
+h1{font-family:var(--disp);font-size:clamp(24px,4vw,34px);line-height:1.14;margin:0 0 8px;letter-spacing:-.025em;font-weight:800;text-wrap:balance}
+.lead{font-size:16px;color:var(--text-2);max-width:72ch;margin:0 0 4px}
+.meta{font-family:var(--mono);font-size:11px;color:var(--text-3);margin:12px 0 28px}
+
+/* funnel strip */
+.funnel{display:flex;gap:6px;overflow-x:auto;margin:6px 0 8px;align-items:stretch}
+.fstage{flex:1;min-width:120px;border:1.5px solid var(--border-2);border-radius:11px;padding:10px 12px;background:var(--muted)}
+.fstage .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text-3);text-transform:uppercase}
+.fstage b{display:block;font-size:12.5px;margin-top:2px}
+.fstage .loss{font-family:var(--disp);font-size:19px;font-weight:750;color:var(--err)}
+.fstage .ps{font-family:var(--mono);font-size:9.5px;color:var(--accent);margin-top:3px}
+.farr{align-self:center;color:var(--text-3);flex:none}
+.punch{border-left:3px solid var(--accent);background:var(--primary-lighter);border-radius:0 10px 10px 0;padding:12px 17px;margin:16px 0 30px;font-size:14px;color:var(--text-2)}
+.punch b{color:var(--text)}
+
+h2{font-family:var(--disp);font-size:17px;margin:30px 0 12px;font-weight:750;display:flex;align-items:center;gap:10px}
+.pill{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;border-radius:999px;padding:3px 10px}
+.pill.now{background:var(--ok-light);color:var(--ok)}
+.pill.next{background:var(--warn-light);color:var(--warn)}
+.pill.not{background:var(--muted);color:var(--text-3);border:1px solid var(--border)}
+
+.tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{text-align:left;padding:10px 14px;border-top:1px solid var(--border);font-size:13px;vertical-align:top}
+th{border-top:none;background:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);font-weight:500}
+td .id{font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:600;white-space:nowrap}
+td b{font-size:13px}
+td .how{color:var(--text-2)}
+.cap{display:inline-block;font-family:var(--mono);font-size:9.5px;background:var(--async-light);color:var(--async);border-radius:5px;padding:1px 7px;margin:2px 3px 0 0;white-space:nowrap}
+.num{font-family:var(--disp);font-weight:750}
+.g{color:var(--ok);font-weight:700}
+
+footer{margin-top:40px;border-top:1px solid var(--border);padding-top:14px;font-size:11.5px;color:var(--text-3);font-family:var(--mono)}
+@media print{.doc{padding:10px}}
+</style>
+</head>
+<body>
+<div class="doc">
+  <div class="eyebrow">AI Labs × Frontline Workforce Operations</div>
+  <h1>Ten problem statements. Nine are ours to solve.</h1>
+  <p class="lead">The funnel leaks at every stage where we make a frontline worker fight a form, wait in silence, or show up on hope. Every one of those moments is a conversation — and conversations are exactly what AI Labs ships. Six problems are solvable on the platform as it stands; three ride roadmap items already specced and prototyped.</p>
+  <div class="meta">Anuj Saxena · Product · 17 Aug 2026 · problem statements: Frontline Workforce Ops doc</div>
+
+  <div class="funnel">
+    <div class="fstage"><span class="k">Select store</span><b>Doc upload</b><span class="loss">−40%</span><span class="ps">PS-01</span></div>
+    <span class="farr">→</span>
+    <div class="fstage"><span class="k">Verification</span><b>Manual queue stalls</b><span class="loss">20% stuck</span><span class="ps">PS-02</span></div>
+    <span class="farr">→</span>
+    <div class="fstage"><span class="k">Contract signed</span><b>Store visit</b><span class="loss">−50%</span><span class="ps">PS-03</span></div>
+    <span class="farr">→</span>
+    <div class="fstage"><span class="k">Joined</span><b>First shift</b><span class="loss">−40%</span><span class="ps">PS-04</span></div>
+    <span class="farr">→</span>
+    <div class="fstage"><span class="k">First punch-in</span><b>Stays active</b><span class="loss">−60%</span><span class="ps">PS-05</span></div>
+  </div>
+  <div class="punch"><b>Compound math:</b> of 100 candidates who pick a store, roughly <b class="num">7</b> are still working a month later. Each stage bleeds independently — and every stage is a moment nobody talks to the candidate. <b>That's the whole thesis: the funnel doesn't need more forms or more agents. It needs an AI employee who never stops the conversation.</b></div>
+
+  <h2><span class="pill now">SOLVE NOW</span> Six problems, two agents, existing platform</h2>
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th style="width:90px">PS</th><th style="width:230px">What we deploy</th><th>How it kills the problem</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="id">PS-01</span><br><b>−40% at doc upload</b></td>
+          <td><b>Onboarding agent</b> (Mia template)<br><span class="cap">CHAT_AGENT</span><span class="cap">image_capture</span><span class="cap">OCR + confirm</span></td>
+          <td class="how">Replace the upload form with a chat that opens the camera, reads the document, and asks the candidate to <b>confirm, not retype</b>. Save-and-resume tied to the phone number, nudges on drop-off. Research base: chat-native steps convert ≈92% vs ≈20% for portals. <span class="g">Already prototyped end-to-end.</span></td>
+        </tr>
+        <tr>
+          <td><span class="id">PS-02</span><br><b>20% stall in manual verify</b></td>
+          <td><b>Verification pipeline</b><br><span class="cap">WORKFLOW_AGENT</span><span class="cap">WAITING_FOR_HUMAN</span><span class="cap">exception queue</span></td>
+          <td class="how">Candidate keeps moving while checks run async — 3-state status (in progress / needs you / cleared), WhatsApp push the moment a human clears it. Ops get a triage queue with SLA clocks instead of a silent backlog. Nobody drops off waiting in the dark.</td>
+        </tr>
+        <tr>
+          <td><span class="id">PS-03</span><br><b>50% no-show at store</b></td>
+          <td rowspan="2"><b>Ghosting-guard cadence</b><br><span class="cap">scheduled triggers</span><span class="cap">quick replies</span><span class="cap">calendar/directions</span></td>
+          <td class="how">Post-signature, the agent owns the gap: what-to-bring checklist, store directions, day-before and 2-hour confirmations, one-tap reschedule. Compressing this window cut attrition ~62% in published studies. Blockers ("can't reach", "shift conflict") get captured, not discovered.</td>
+        </tr>
+        <tr>
+          <td><span class="id">PS-04</span><br><b>40% miss first shift</b></td>
+          <td class="how">Same engine, second stage: joining→first-punch confirmations, blocker capture routed to the store manager <i>before</i> the shift is short, not after.</td>
+        </tr>
+        <tr>
+          <td><span class="id">PS-07</span><br><b>Manual Tier-1 helpdesk</b></td>
+          <td rowspan="2"><b>Support &amp; triage agent</b><br><span class="cap">CHAT_AGENT</span><span class="cap">tools: status/store-change</span><span class="cap">webhook → ticketing</span></td>
+          <td class="how">Store changes, upload help, "where's my verification" — the three biggest inbound categories are all self-servable against our own APIs. Tier-1 deflects; humans get Tier-2 only, at ₹0.37/interaction vs support-desk cost.</td>
+        </tr>
+        <tr>
+          <td><span class="id">PS-08</span><br><b>Grievance overload</b></td>
+          <td class="how">Every grievance arrives classified, structured, and prioritized — agents work a pre-filtered queue instead of raw inbound. Critical issues jump the line by design.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2><span class="pill next">SOLVE NEXT</span> Three problems riding roadmap items already specced</h2>
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th style="width:90px">PS</th><th style="width:230px">What we deploy</th><th>How + what it needs</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="id">PS-05</span><br><b>60% go inactive, cause unknown</b></td>
+          <td><b>Outbound voice check-in agent</b><br><span class="cap">VOICE step (shipped)</span><span class="cap">Plivo (shipped)</span></td>
+          <td class="how">Agent calls every worker inactive 3+ days — 2-minute structured conversation in their language, reasons land in a taxonomy on the analytics dashboard. apna's calling agent hits 80%+ connect rates; ours runs on rails we already have. Needs: call scripts + reason taxonomy. <b>This converts churn from a mystery into a dashboard.</b></td>
+        </tr>
+        <tr>
+          <td><span class="id">PS-06</span><br><b>No exit data</b></td>
+          <td><b>Automated exit interview</b><br><span class="cap">WhatsApp (one-pager 05)</span><span class="cap">voice fallback</span></td>
+          <td class="how">Every separation triggers a WhatsApp exit conversation, voice for non-responders. Structured drivers — pay, manager, location, better offer — feed retention decisions instead of anecdotes. Same build as PS-05; one taxonomy serves both.</td>
+        </tr>
+        <tr>
+          <td><span class="id">PS-09</span><br><b>Manual UAN/ESIC fetch</b></td>
+          <td><b>Browser-use fetch task</b><br><span class="cap">BROWSER step (PRD done)</span><span class="cap">Tier-0 read · audited</span></td>
+          <td class="how">Employee-Currency-style portals have no API — which is exactly what our browser-use capability is for: scoped, recorded, read-only sessions that fetch UAN/ESIC by ID+phone and write to payroll with full provenance. First non-recruiting proof that browser-use is a platform primitive, not a feature.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2><span class="pill not">NOT OURS ALONE</span> The honest one</h2>
+  <div class="tblwrap">
+    <table>
+      <tbody>
+        <tr>
+          <td style="width:90px;border-top:none"><span class="id">PS-10</span><br><b>Instant BGV infra</b></td>
+          <td class="how" style="border-top:none">AI Labs already orchestrates BGV well — async dispatch, human adjudication on ambers, candidate never blocked (that's the Cole pipeline). But <b>"instant" CRC/PCC is a data-partner and Verify-product problem</b> — courts and police clearances have real-world latency no agent removes. What we own: making the wait invisible to the candidate and the adjudication 10× faster for ops. Pair this PS with the Verify team.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="punch" style="margin-top:28px"><b>The ask:</b> pick PS-01 + PS-02 as the pilot — one client, the Mia onboarding template plus the verification pipeline, targeting the −40% doc drop-off head-on. It's our strongest prototype, the funnel's biggest single leak, and every later stage inherits the fix. <b>Six problem statements, two agent templates, one platform we already run.</b></div>
+
+  <footer>Working note for founder review · prototypes &amp; PRDs: website684.github.io/ailabs-product-program · numbers from the PS doc + cited research appendices</footer>
+</div>
+</body>
+</html>
